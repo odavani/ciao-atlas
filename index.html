@@ -1,0 +1,1034 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Ciao Billboard Atlas</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,500;0,700;0,800;1,800&family=Noto+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" id="cjkFont" href="data:text/css,">
+<style>
+/* Layout: full-bleed night globe; browse rail floats left, billboard detail docks right (bottom sheets on phones).
+   Brand: Ciao Group rate-card palette. Navy ground, green-to-blue logo gradient used only on the logo and the
+   signature rule under the header, brand green for actions and pins, teal for Ciao's own confirmed prices.
+   Single dark theme on purpose: the globe is the night side, every pin a lit screen. */
+:root {
+  color-scheme: dark;
+  --night: #071423;
+  --panel: #0d2238;
+  --panel-2: #14304f;
+  --line: #22456b;
+  --ink: #eef4f8;
+  --ink-dim: #a3b8cb;
+  --ink-mute: #7f97ad;
+  --green: #73d43a;          /* Ciao logo green: actions, pins */
+  --green-ink: #0b220c;
+  --green-soft: rgba(115, 212, 58, .14);
+  --teal: #43c5ad;           /* Ciao rate-card teal: Ciao's own prices */
+  --blue: #5aa7e1;           /* Ciao logo blue */
+  --gold: #daa442;           /* Ciao rate-card gold: estimates */
+  --brand-rule: linear-gradient(90deg, #73d43a 0%, #43c5ad 50%, #5aa7e1 100%);
+  --cjk: "Noto Sans SC";
+  --font-display: "Archivo", var(--cjk), "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Noto Sans", var(--cjk), "Helvetica Neue", Arial, sans-serif;
+  --r: 8px;                  /* panels, inputs, thumbs; pills and chips are full-round */
+  --rail-w: 348px;
+  --panel-w: 448px;
+  --ease: cubic-bezier(.16, 1, .3, 1);
+}
+:root[lang="zh-TW"] { --cjk: "Noto Sans TC"; }
+:root[lang="ko"] { --cjk: "Noto Sans KR"; }
+:root[lang="ja"] { --cjk: "Noto Sans JP"; }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--night); color: var(--ink); font: 15px/1.5 var(--font-body); overflow: hidden; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+.ico { width: 18px; height: 18px; fill: currentColor; flex: none; }
+.num { font-variant-numeric: tabular-nums; }
+
+#app { position: relative; height: 100%; overflow: hidden; }
+#globe { position: absolute; inset: 0; z-index: 0; isolation: isolate; transition: transform .6s var(--ease); }
+#globe canvas { display: block; }
+body.panel-open #globe { transform: translateX(calc(var(--panel-w) / -2 + var(--rail-w) / 2)); }
+body:not(.panel-open) #globe { transform: translateX(calc(var(--rail-w) / 2)); }
+
+/* ---------- markers ---------- */
+.mk { pointer-events: auto; position: relative; width: 0; height: 0; transition: opacity .25s; }
+.mk button { position: absolute; left: 0; top: 0; transform: translate(-50%, -50%); display: grid; place-items: center;
+  border: 0; padding: 0; background: none; width: 30px; height: 30px; border-radius: 50%; }
+.mk .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--green);
+  box-shadow: 0 0 0 3px rgba(115, 212, 58, .22), 0 0 14px 2px rgba(115, 212, 58, .5); transition: transform .2s var(--ease); }
+.mk.multi .dot { width: 20px; height: 20px; display: grid; place-items: center; font: 700 11px/1 var(--font-display); color: var(--green-ink); }
+.mk button:hover .dot, .mk.active .dot { transform: scale(1.35); }
+.mk.active .dot { background: #f2fff0; }
+.mk.dim { opacity: .18; pointer-events: none; }
+.mk .lbl { position: absolute; left: 11px; top: -9px; white-space: nowrap; pointer-events: none; font: 700 12.5px/1 var(--font-display);
+  letter-spacing: .02em; color: var(--ink); text-shadow: 0 1px 3px rgba(0, 0, 0, .95), 0 0 8px rgba(0, 0, 0, .85); opacity: 0; transition: opacity .25s; }
+.mk.multi .lbl { left: 16px; }
+.mk.major .lbl, body.zoomed .mk .lbl, .mk.active .lbl { opacity: 1; }
+.mk.dim .lbl { opacity: 0; }
+.scene-tooltip, .float-tooltip-kap { font: 500 12.5px var(--font-body) !important; color: var(--ink) !important;
+  background: rgba(13, 34, 56, .92) !important; border: 1px solid var(--line); border-radius: 4px; padding: 3px 8px !important; }
+
+/* ---------- rail ---------- */
+.rail { position: absolute; top: 16px; left: 16px; bottom: 16px; width: var(--rail-w); z-index: 2; display: flex; flex-direction: column; min-height: 0;
+  background: rgba(13, 34, 56, .88); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.rail::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--brand-rule); }
+.mast { padding: 20px 20px 14px; display: grid; gap: 10px; }
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.brand img { height: 24px; width: auto; display: block; }
+.brand span { font: 700 13px/1.1 var(--font-display); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-dim); white-space: nowrap; }
+.prefs { display: flex; gap: 8px; flex-wrap: wrap; }
+.sel { position: relative; }
+.sel select { appearance: none; -webkit-appearance: none; background: var(--panel-2); border: 1px solid var(--line); border-radius: 999px;
+  padding: 4px 26px 4px 11px; font-size: 12.5px; font-weight: 500; color: var(--ink); cursor: pointer; }
+.sel::after { content: ""; position: absolute; right: 11px; top: 50%; width: 6px; height: 6px; margin-top: -5px; border: solid var(--ink-dim);
+  border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); pointer-events: none; }
+.mast h1 { margin: 2px 0 0; font: italic 800 28px/1.08 var(--font-display); text-wrap: balance; letter-spacing: -.005em; }
+:root:not([lang="en"]) .mast h1 { font-style: normal; }  /* no synthetic italics on CJK */
+.mast p { margin: 0; color: var(--ink-dim); font-size: 13.5px; }
+.search { position: relative; margin: 0 20px; display: block; }
+.search .ico { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--ink-dim); width: 16px; height: 16px; }
+.search input { width: 100%; box-sizing: border-box; padding: 9px 12px 9px 34px; border-radius: var(--r); background: var(--panel-2); border: 1px solid var(--line); outline: none; }
+.search input::placeholder { color: var(--ink-mute); }
+.search input:focus { border-color: var(--green); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 20px; }
+.kinds { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 20px 12px; }
+.chip { border: 1px solid var(--line); background: transparent; border-radius: 999px; padding: 4px 11px; font-size: 12.5px; color: var(--ink-dim);
+  display: inline-flex; gap: 6px; align-items: baseline; }
+.chip em { font-style: normal; font-size: 11px; opacity: .75; font-variant-numeric: tabular-nums; }
+.chip[aria-pressed="true"] { background: var(--green); border-color: var(--green); color: var(--green-ink); font-weight: 600; }
+.list { border-top: 1px solid var(--line); overflow-y: auto; flex: 1; min-height: 0; padding: 6px 8px 12px; overscroll-behavior: contain; }
+.list h2 { font: 700 12px/1 var(--font-display); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-mute); margin: 16px 12px 6px; }
+.row { width: 100%; display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 12px; align-items: center; text-align: left;
+  border: 0; background: none; padding: 7px 12px; border-radius: var(--r); }
+.row:hover, .row.active { background: var(--panel-2); }
+.row img, .row .noimg { width: 52px; height: 36px; object-fit: cover; border-radius: 4px; background: var(--panel-2); display: block; }
+.row .t b { display: block; font-weight: 500; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row .t span { display: block; font-size: 12.5px; color: var(--ink-dim); }
+.row .p { font: 600 12.5px var(--font-display); color: var(--ink-dim); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.row .p small { display: block; font: 400 10.5px var(--font-body); color: var(--ink-mute); }
+.kind { display: inline-block; margin-left: 6px; font-size: 10.5px; font-weight: 600; letter-spacing: .04em; color: var(--green);
+  border: 1px solid rgba(115, 212, 58, .45); border-radius: 999px; padding: 0 6px; vertical-align: 1px; }
+.empty { padding: 28px 14px; color: var(--ink-dim); font-size: 14px; }
+
+/* ---------- hover peek ---------- */
+.peek { position: fixed; z-index: 4; width: 260px; pointer-events: none; background: var(--panel); border: 1px solid var(--line);
+  border-radius: var(--r); overflow: hidden; box-shadow: 0 18px 50px rgba(2, 8, 16, .6); animation: peek .22s var(--ease); }
+@keyframes peek { from { opacity: 0; transform: translateY(6px); } }
+.peek img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: var(--panel-2); }
+.peek .b { padding: 10px 12px 12px; display: grid; gap: 2px; }
+.peek b { font: 800 18px/1.15 var(--font-display); }
+.peek span { font-size: 12.5px; color: var(--ink-dim); }
+.peek .from { margin-top: 6px; font: 700 13px var(--font-display); color: var(--green); }
+
+/* ---------- detail panel ---------- */
+.panel { position: absolute; top: 16px; right: 16px; bottom: 16px; width: var(--panel-w); z-index: 3; background: var(--panel);
+  border: 1px solid var(--line); border-radius: var(--r); display: flex; flex-direction: column; min-height: 0; overflow: hidden; animation: slide .45s var(--ease); }
+@keyframes slide { from { transform: translateX(24px); opacity: 0; } }
+.panel .scroll { overflow-y: auto; overflow-x: hidden; flex: 1; min-height: 0; overscroll-behavior: contain; }
+.hero { position: relative; }
+.hero img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: var(--panel-2); }
+.hero .noimg { aspect-ratio: 16 / 9; background: var(--panel-2); }
+.x { position: absolute; top: 10px; right: 10px; width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .2);
+  background: rgba(7, 20, 35, .74); display: grid; place-items: center; }
+.credit { font-size: 11px; color: var(--ink-mute); padding: 6px 20px 0; margin: 0; }
+.credit a { color: inherit; }
+.siblings { display: flex; gap: 8px; overflow-x: auto; padding: 14px 20px 2px; }
+.sib { flex: none; width: 112px; border: 1px solid var(--line); border-radius: var(--r); background: var(--panel-2); padding: 0; overflow: hidden; text-align: left; }
+.sib img, .sib .noimg { display: block; width: 100%; height: 56px; object-fit: cover; }
+.sib span { display: block; padding: 5px 7px 6px; font-size: 11.5px; line-height: 1.25; height: 2.5em; overflow: hidden; }
+.sib[aria-current="true"] { border-color: var(--green); }
+.body { padding: 16px 20px 20px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
+.where { font-size: 13px; color: var(--ink-dim); display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.where .ico { width: 15px; height: 15px; color: var(--green); }
+.body h2 { margin: 2px 0 0; font: 800 32px/1.05 var(--font-display); text-wrap: balance; }
+.why { margin: 0; color: var(--ink-dim); max-width: 60ch; }
+.facts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 18px; margin: 0; }
+.facts div { min-width: 0; }
+.facts dt { font: 700 11px/1.2 var(--font-display); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-mute); }
+.facts dd { margin: 3px 0 0; font-size: 14px; }
+.seg { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); border-radius: var(--r); padding: 3px; gap: 3px; }
+.seg button { border: 0; background: none; border-radius: 5px; padding: 8px 6px; font-weight: 500; font-size: 14px; color: var(--ink-dim); }
+.seg button[aria-pressed="true"] { background: var(--panel-2); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
+.seg button:disabled { opacity: .35; cursor: not-allowed; }
+.pkgdesc { margin: -8px 0 0; font-size: 13px; color: var(--ink-dim); }
+.line { display: grid; grid-template-columns: 1fr auto; gap: 2px 16px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+.line b { font-weight: 500; }
+.line small { grid-column: 1; color: var(--ink-mute); font-size: 12.5px; }
+.line .amt { font: 600 14px var(--font-display); text-align: right; grid-row: 1; grid-column: 2; font-variant-numeric: tabular-nums; }
+.total { display: flex; justify-content: space-between; align-items: baseline; padding-top: 14px; gap: 12px; }
+.total span { font: 700 13px var(--font-display); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-dim); }
+.total strong { font: 800 38px/1 var(--font-display); color: var(--green); font-variant-numeric: tabular-nums; }
+.range { font-size: 12.5px; color: var(--ink-dim); margin-top: 6px; text-align: right; }
+.meta { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.badge { display: inline-flex; gap: 6px; align-items: center; border-radius: 999px; padding: 3px 10px; font-size: 12px;
+  border: 1px solid rgba(218, 164, 66, .5); color: var(--gold); background: rgba(218, 164, 66, .1); }
+.badge.ok { border-color: rgba(67, 197, 173, .55); color: var(--teal); background: rgba(67, 197, 173, .1); }
+.badge .ico { width: 14px; height: 14px; }
+.unavail { padding: 16px; border: 1px dashed var(--line); border-radius: var(--r); color: var(--ink-dim); font-size: 14px; }
+.note { font-size: 12.5px; color: var(--ink-dim); margin: 0; }
+
+/* rate card (Ciao's issued prices) */
+.rc { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
+.rc > div { min-width: 0; }
+.rc h3 { margin: 0 0 8px; font: 700 12.5px/1.35 var(--font-display); letter-spacing: .08em; text-transform: uppercase; color: var(--teal); text-wrap: balance; }
+.rcwrap { overflow-x: auto; }
+.rc table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.rc th { font-size: 11.5px; font-weight: 500; color: var(--ink-mute); text-align: right; padding: 0 4px 6px; white-space: nowrap; }
+.rc td { border-top: 1px solid var(--line); padding: 4px; vertical-align: middle; }
+.rc td:first-child { padding-left: 0; min-width: 104px; }
+.rc td b { display: block; font-weight: 500; font-size: 13.5px; }
+.rc td small { display: block; color: var(--ink-mute); font-size: 11.5px; line-height: 1.3; }
+.opt { width: 100%; border: 1px solid transparent; background: none; border-radius: 5px; padding: 6px; text-align: right;
+  font: 600 12.5px var(--font-display); white-space: nowrap; color: var(--ink); font-variant-numeric: tabular-nums; }
+.opt:hover { border-color: var(--line); background: var(--panel-2); }
+.opt[aria-pressed="true"] { border-color: var(--green); background: var(--green-soft); color: var(--green); }
+.fixed { display: block; text-align: right; font: 600 12.5px var(--font-display); padding: 6px; white-space: nowrap; color: var(--ink-dim); }
+.na { display: block; text-align: right; color: #4f6a84; padding: 6px; }
+.pick { display: grid; gap: 4px; }
+.pick p { margin: 0; font-size: 13px; color: var(--ink-dim); }
+
+.foot { padding: 14px 20px calc(14px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--line); background: var(--panel); display: grid; gap: 8px; }
+.cta { width: 100%; border: 0; border-radius: var(--r); padding: 13px 16px; background: var(--green); color: var(--green-ink); font-weight: 600; font-size: 15px;
+  display: flex; justify-content: center; gap: 8px; align-items: center; transition: transform .15s var(--ease), background .2s; }
+.cta:active { transform: translateY(1px) scale(.99); }
+.cta:disabled { opacity: .5; cursor: not-allowed; }
+.cta.ghost { background: var(--panel-2); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
+
+/* plan + inquiry */
+.planbtn { position: absolute; top: 16px; right: 16px; z-index: 3; display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 999px;
+  background: rgba(13, 34, 56, .88); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid var(--line); font-weight: 500; font-size: 14px; }
+.planbtn em { font-style: normal; font: 700 12px var(--font-display); background: var(--green); color: var(--green-ink); border-radius: 999px; padding: 1px 7px; }
+body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
+.head { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
+.pitem { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto auto; gap: 6px 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.pitem img, .pitem .noimg { width: 52px; height: 36px; object-fit: cover; border-radius: 4px; background: var(--panel-2); display: block; }
+.pitem .t b { display: block; font-weight: 500; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pitem .t span { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+.pitem select, .pitem input { background: var(--panel-2); border: 1px solid var(--line); border-radius: 5px; font-size: 12.5px; padding: 3px 6px; max-width: 100%; min-width: 0; }
+.pitem .amt { font: 600 13px var(--font-display); font-variant-numeric: tabular-nums; }
+.iconbtn { border: 0; background: none; color: var(--ink-dim); padding: 6px; border-radius: 5px; display: grid; place-items: center; }
+.iconbtn:hover { color: var(--ink); background: var(--panel-2); }
+.form { display: grid; gap: 14px; }
+.field { display: grid; gap: 6px; }
+.field label { font-size: 13px; font-weight: 500; color: var(--ink-dim); }
+.field input, .field select, .field textarea { background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--r); padding: 10px 12px; outline: none; font-size: 15px; }
+.field textarea { min-height: 84px; resize: vertical; }
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--green); }
+.err { color: #ff9b8a; font-size: 13px; margin: 0; }
+.summary { background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px; font-size: 13px; color: var(--ink-dim); white-space: pre-wrap; max-height: 220px; overflow: auto; }
+.addr { display: flex; gap: 8px; align-items: center; justify-content: space-between; background: var(--panel-2); border: 1px solid var(--line);
+  border-radius: var(--r); padding: 8px 8px 8px 12px; user-select: all; font-weight: 600; }
+.addr button { user-select: none; }
+.done { display: grid; gap: 10px; justify-items: start; }
+.done .tick { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--green-soft); color: var(--green); }
+.done .tick .ico { width: 24px; height: 24px; }
+.toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 9; background: var(--ink); color: var(--night); padding: 9px 16px;
+  border-radius: 999px; font-size: 14px; font-weight: 500; animation: peek .2s var(--ease); }
+
+.mobilebar { display: none; }
+.rail .railclose { display: none; }
+.loading { position: absolute; inset: 0; display: grid; place-items: center; color: var(--ink-dim); font-size: 14px; pointer-events: none; }
+
+/* ---------- phones ---------- */
+@media (max-width: 820px) {
+  :root { --rail-w: 0px; }
+  body.panel-open #globe, body:not(.panel-open) #globe { transform: none; }
+  .rail { top: auto; left: 0; right: 0; bottom: 0; width: auto; height: 82%; border-radius: 16px 16px 0 0; transform: translateY(102%);
+    transition: transform .4s var(--ease); background: var(--panel); }
+  body.rail-open .rail { transform: none; }
+  body.rail-open .mobilebar, body.panel-open .mobilebar { display: none; }
+  .rail .railclose { display: grid; position: absolute; top: 12px; right: 10px; z-index: 1; }
+  .mast { padding-top: 22px; }
+  .mast h1 { font-size: 23px; }
+  .panel { top: auto; left: 0; right: 0; bottom: 0; width: auto; max-height: 90%; border-radius: 16px 16px 0 0; animation-name: rise; }
+  @keyframes rise { from { transform: translateY(40px); opacity: 0; } }
+  .planbtn, body.panel-open .planbtn { right: 16px; top: calc(16px + env(safe-area-inset-top, 0px)); }
+  .mobilebar { display: flex; position: absolute; left: 16px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 2;
+    justify-content: space-between; align-items: center; gap: 12px; pointer-events: none; }
+  .mobilebar > * { pointer-events: auto; }
+  .mobilebar img { height: 26px; display: block; }
+  .mobilebar .open { border: 0; border-radius: 999px; padding: 11px 16px; background: var(--green); color: var(--green-ink); font-weight: 600; display: inline-flex; gap: 8px; align-items: center; }
+  .peek { display: none; }
+  .body h2 { font-size: 27px; }
+  .total strong { font-size: 32px; }
+  .rc td:first-child { min-width: 84px; }
+  .opt, .fixed { padding: 6px 3px; font-size: 11.5px; }
+  .rc th { font-size: 10.5px; padding: 0 3px 6px; }
+  .rc td small { font-size: 11px; }
+  .mk .lbl { font-size: 11.5px; }
+  .field input, .field select, .field textarea { font-size: 16px; } /* stops iOS zoom on focus */
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+
+<div id="app">
+  <div id="globe" aria-label="Globe"></div>
+  <div class="loading" id="loading">Loading…</div>
+
+  <aside class="rail" id="rail">
+    <button class="iconbtn railclose" id="railClose" type="button"><svg class="ico" viewBox="0 0 256 256" aria-hidden="true"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg></button>
+    <div class="mast">
+      <div class="brand"><img src="assets/ciao-group-logo.png" alt="Ciao Group" width="104" height="24"><span data-t="brandSub"></span></div>
+      <div class="prefs">
+        <label class="sel"><span hidden data-t="language"></span><select id="langSel"></select></label>
+        <label class="sel"><span hidden data-t="currency"></span><select id="curSel"></select></label>
+      </div>
+      <h1 data-t="h1"></h1>
+      <p data-t="lede"></p>
+    </div>
+    <label class="search" for="q">
+      <svg class="ico" viewBox="0 0 256 256" aria-hidden="true"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg>
+      <input id="q" type="search" autocomplete="off">
+    </label>
+    <div class="chips" id="chips" role="group"></div>
+    <div class="kinds" id="kinds" role="group" hidden></div>
+    <div class="list" id="list"></div>
+  </aside>
+
+  <button class="planbtn" id="planBtn" type="button">
+    <svg class="ico" viewBox="0 0 256 256" aria-hidden="true"><path d="M184,32H72A16,16,0,0,0,56,48V224a8,8,0,0,0,12.24,6.78L128,193.43l59.77,37.35A8,8,0,0,0,200,224V48A16,16,0,0,0,184,32Zm0,177.57-51.77-32.35a8,8,0,0,0-8.48,0L72,209.57V48H184Z"/></svg>
+    <span data-t="yourPlan"></span> <em id="planCount" class="num">0</em>
+  </button>
+
+  <div class="mobilebar">
+    <img src="assets/ciao-group-logo.png" alt="Ciao Group" width="113" height="26">
+    <button class="open" id="railOpen" type="button">
+      <svg class="ico" viewBox="0 0 256 256" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/></svg>
+      <span data-t="browse"></span>
+    </button>
+  </div>
+
+  <div class="peek" id="peek" hidden></div>
+  <section class="panel" id="panel" hidden aria-live="polite"></section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/globe.gl@2.45.0/dist/globe.gl.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<script>
+(() => {
+  // ---------- where inquiries go ----------
+  // endpoint: a JSON form-to-email relay (e.g. https://formsubmit.co/ajax/<address>). Inside claude.ai the page
+  // cannot reach other hosts, so the form falls back to a prefilled email + copy button there.
+  const INQUIRY = { to: 'opourmomen@gmail.com', endpoint: 'https://formsubmit.co/ajax/opourmomen@gmail.com' };
+
+  const ICON = {
+    x: '<svg class="ico" viewBox="0 0 256 256" aria-hidden="true"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg>',
+    plus: '<svg class="ico" viewBox="0 0 256 256" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg>',
+    check: '<svg class="ico" viewBox="0 0 256 256" aria-hidden="true"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"/></svg>',
+    pin: '<svg class="ico" viewBox="0 0 256 256" aria-hidden="true"><path d="M128,64a40,40,0,1,0,40,40A40,40,0,0,0,128,64Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,128Zm0-112a88.1,88.1,0,0,0-88,88c0,31.4,14.51,64.68,42,96.25a254.19,254.19,0,0,0,41.45,38.3,8,8,0,0,0,9.18,0A254.19,254.19,0,0,0,174,200.25c27.45-31.57,42-64.85,42-96.25A88.1,88.1,0,0,0,128,16Zm0,206c-16.53-13-72-60.75-72-118a72,72,0,0,1,144,0C200,161.23,144.53,209,128,222Z"/></svg>',
+    copy: '<svg class="ico" viewBox="0 0 256 256" aria-hidden="true"><path d="M216,32H88a8,8,0,0,0-8,8V80H40a8,8,0,0,0-8,8V216a8,8,0,0,0,8,8H168a8,8,0,0,0,8-8V176h40a8,8,0,0,0,8-8V40A8,8,0,0,0,216,32ZM160,208H48V96H160Zm48-48H176V88a8,8,0,0,0-8-8H96V48H208Z"/></svg>',
+    trash: '<svg class="ico" viewBox="0 0 256 256" aria-hidden="true"><path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"/></svg>',
+    send: '<svg class="ico" viewBox="0 0 256 256" aria-hidden="true"><path d="M227.32,28.68a16,16,0,0,0-15.66-4.08l-.15,0L19.57,82.84a16,16,0,0,0-2.49,29.8L102,154l41.3,84.87A15.86,15.86,0,0,0,157.74,248q.69,0,1.38-.06a15.88,15.88,0,0,0,14-11.51l58.2-191.94c0-.05,0-.1,0-.15A16,16,0,0,0,227.32,28.68ZM157.83,231.85l-.05.14L118.42,151l47.24-47.25a8,8,0,0,0-11.31-11.31L107.1,139.71,26,100.58l.14,0L216,40Z"/></svg>'
+  };
+
+  // ---------- UI strings: en, zh-CN, zh-TW, ko, ja ----------
+  const LANGS = [['en', 'English'], ['zh-CN', '简体中文'], ['zh-TW', '繁體中文'], ['ko', '한국어'], ['ja', '日本語']];
+  const STR = {
+    en: {
+      brandSub: 'Billboard Atlas', language: 'Language', currency: 'Currency', local: 'Local currency',
+      h1: "The world's most-watched screens, priced for your moment.", lede: 'Birthdays, anniversaries, launches. Pick a screen, see the full cost.',
+      search: 'Search a city or billboard', everywhere: 'Everywhere', allFormats: 'All formats', browse: 'Browse billboards', yourPlan: 'Your plan', close: 'Close',
+      loading: 'Loading the billboards…', loadFail: 'The billboard list didn’t load. Refresh the page to try again.', noMatch: 'No billboards match. Try a city name like Tokyo or London.',
+      'r.USA': 'USA', 'r.Europe': 'Europe', 'r.Middle East': 'Middle East', 'r.Asia': 'Asia', 'r.China': 'China', 'r.Australia': 'Australia',
+      'k.screen': 'Screens', 'k.truck': 'Trucks', 'k.aerial': 'Aerial banners', 'tag.truck': 'Truck', 'tag.aerial': 'Aerial',
+      fromLbl: 'from', fromTpl: 'From {p}', nBoards: '{n} billboards', including: '{n} billboards, including {name}', inCity: 'Billboards in {city}',
+      seenBy: 'Seen by', perDay: '{n} a day', format: 'Format', adLength: 'Ad length', secs: '{n} seconds', playsEvery: 'Plays every', mins: '{n} min', secShort: '{n} sec',
+      shortest: 'Shortest booking', size: 'Size', screen: 'Screen', sides: '{n} sides', route: 'Route',
+      'p.moment': 'Moment', 'p.day': 'Full day', 'p.week': 'Week', bookingLength: 'Booking length',
+      'c.high': 'Estimate from a published rate card', 'c.medium': 'Estimate from industry reports', 'c.low': 'Estimate benchmarked on nearby screens', 'c.none': 'Estimate',
+      confirmed: 'Confirmed rate', quoted: 'Quoted by the operator', ratecard: 'Ciao rate card, {d}',
+      unavailable: "This billboard isn't sold as a {pkg} booking. Choose another length above.",
+      total: 'Total', price: 'Price', likely: 'Likely between {lo} and {hi}, depending on dates and availability', selection: 'Your selection: {x}',
+      included: 'Included', notOffered: 'Not offered', net: '(net)',
+      fxCny: 'CNY shown for reference at 6.7569 per USD. Contracts are priced in USD.', fxOther: 'Converted at approximate rates for reference. Contracts are priced in USD.',
+      datesNote: 'Dates and availability are confirmed at booking.', locPhoto: 'Location photo.', photo: 'Photo:',
+      add: 'Add to plan', inPlan: 'In your plan', update: 'Update plan', added: 'Added to your plan', removed: 'Removed from your plan', updated: 'Plan updated',
+      estTotal: 'Estimated total', date: 'Date', option: 'Option', remove: 'Remove',
+      planNote: 'Mix billboards across the quarter: a short burst for each birthday, a week for the launch. Send the plan and Ciao Group will contact you to confirm dates.',
+      planEmpty: 'Your plan is empty. Open any billboard on the globe and choose Add to plan. Build a quarter of birthdays, anniversaries and launches, then send it in one go.',
+      sendInquiry: 'Send inquiry', formTitle: 'Send your plan', formIntro: 'Tell us how to reach you. Ciao Group will contact you directly about this plan.',
+      name: 'Name', email: 'Email', contact: 'WeChat, WhatsApp or phone (optional)', occasion: 'Occasion', 'o.birthday': 'Birthday', 'o.anniversary': 'Anniversary', 'o.launch': 'Launch', 'o.other': 'Other',
+      message: 'Anything else? (optional)', back: 'Back to plan', sending: 'Sending…', formErr: 'Add your name and a valid email so we can reach you.',
+      sentTitle: 'Inquiry sent', sentText: 'Ciao Group will contact you soon about your plan.',
+      fbTitle: 'One last step', fbText: 'This page can’t send email by itself. Email the inquiry below to the address shown, or copy it and send it any way you like.',
+      emailBtn: 'Open email', copyBtn: 'Copy inquiry', copyAddr: 'Copy', copied: 'Copied', selectCopy: 'Select the text and copy it',
+      subject: 'Billboard plan inquiry from {name}', inqHead: 'Ciao billboard plan inquiry', planLbl: 'Plan', contactLbl: 'Contact', notes: 'Notes', about: 'about'
+    },
+    'zh-CN': {
+      brandSub: '全球大屏地图', language: '语言', currency: '币种', local: '当地货币',
+      h1: '全球最受瞩目的大屏，为你的重要时刻明码标价。', lede: '生日应援、纪念日、新品发布。选一块屏，看清全部费用。',
+      search: '搜索城市或大屏', everywhere: '全部', allFormats: '全部形式', browse: '浏览大屏', yourPlan: '我的方案', close: '关闭',
+      loading: '正在加载大屏…', loadFail: '大屏列表加载失败，请刷新页面重试。', noMatch: '没有匹配的大屏。试试输入城市名，如东京或伦敦。',
+      'r.USA': '美国', 'r.Europe': '欧洲', 'r.Middle East': '中东', 'r.Asia': '亚洲', 'r.China': '中国', 'r.Australia': '澳大利亚',
+      'k.screen': '大屏', 'k.truck': '广告车', 'k.aerial': '飞机横幅', 'tag.truck': '广告车', 'tag.aerial': '飞机横幅',
+      fromLbl: '起', fromTpl: '{p} 起', nBoards: '{n} 块大屏', including: '共 {n} 块，包括{name}', inCity: '{city}的大屏',
+      seenBy: '日均人流', perDay: '每天 {n}', format: '形式', adLength: '单次时长', secs: '{n} 秒', playsEvery: '循环周期', mins: '{n} 分钟', secShort: '{n} 秒',
+      shortest: '最短投放', size: '尺寸', screen: '屏幕', sides: '{n} 面', route: '路线',
+      'p.moment': '应援时刻', 'p.day': '全天', 'p.week': '一周', bookingLength: '投放时长',
+      'c.high': '估价（依据公开刊例价）', 'c.medium': '估价（依据行业报道）', 'c.low': '估价（参考周边同类大屏）', 'c.none': '估价',
+      confirmed: '已确认价格', quoted: '媒体方报价', ratecard: 'Ciao 官方报价单 {d}',
+      unavailable: '该大屏不提供「{pkg}」投放，请在上方选择其他时长。',
+      total: '合计', price: '价格', likely: '预计 {lo} 至 {hi}，视档期和库存而定', selection: '已选：{x}',
+      included: '已含', notOffered: '不提供', net: '（净价）',
+      fxCny: '人民币按 1 美元 = 6.7569 元折算，仅供参考，合同以美元计价。', fxOther: '按参考汇率折算，仅供参考，合同以美元计价。',
+      datesNote: '具体档期以下单确认为准。', locPhoto: '位置示意图。', photo: '图片：',
+      add: '加入方案', inPlan: '已在方案中', update: '更新方案', added: '已加入方案', removed: '已移出方案', updated: '方案已更新',
+      estTotal: '预估合计', date: '日期', option: '选项', remove: '移除',
+      planNote: '一个季度可以组合多块大屏：每个生日一次应援时刻，新品发布投放一周。提交方案后，Ciao Group 会联系你确认档期。',
+      planEmpty: '你的方案还是空的。在地球上打开任意大屏，选择「加入方案」。把一个季度的生日、纪念日和发布活动排好，一次提交。',
+      sendInquiry: '提交咨询', formTitle: '提交你的方案', formIntro: '留下联系方式，Ciao Group 会就此方案直接联系你。',
+      name: '姓名', email: '邮箱', contact: '微信 / WhatsApp / 电话（选填）', occasion: '用途', 'o.birthday': '生日应援', 'o.anniversary': '纪念日', 'o.launch': '新品发布', 'o.other': '其他',
+      message: '其他需求（选填）', back: '返回方案', sending: '发送中…', formErr: '请填写姓名和有效邮箱，方便我们联系你。',
+      sentTitle: '咨询已发送', sentText: 'Ciao Group 会尽快就你的方案联系你。',
+      fbTitle: '最后一步', fbText: '此页面无法直接发送邮件。请把下方内容发送到所示邮箱，或复制后用任意方式发送。',
+      emailBtn: '打开邮箱', copyBtn: '复制咨询内容', copyAddr: '复制', copied: '已复制', selectCopy: '请选中文字后复制',
+      subject: '{name} 的大屏方案咨询', inqHead: 'Ciao 大屏方案咨询', planLbl: '方案', contactLbl: '联系方式', notes: '备注', about: '约'
+    },
+    'zh-TW': {
+      brandSub: '全球大屏地圖', language: '語言', currency: '幣別', local: '當地貨幣',
+      h1: '全球最受矚目的大屏，為你的重要時刻明碼標價。', lede: '生日應援、紀念日、新品發佈。選一塊屏，看清全部費用。',
+      search: '搜尋城市或大屏', everywhere: '全部', allFormats: '全部形式', browse: '瀏覽大屏', yourPlan: '我的方案', close: '關閉',
+      loading: '正在載入大屏…', loadFail: '大屏列表載入失敗，請重新整理頁面。', noMatch: '沒有符合的大屏。試試輸入城市名稱，如東京或倫敦。',
+      'r.USA': '美國', 'r.Europe': '歐洲', 'r.Middle East': '中東', 'r.Asia': '亞洲', 'r.China': '中國', 'r.Australia': '澳洲',
+      'k.screen': '大屏', 'k.truck': '廣告車', 'k.aerial': '飛機橫幅', 'tag.truck': '廣告車', 'tag.aerial': '飛機橫幅',
+      fromLbl: '起', fromTpl: '{p} 起', nBoards: '{n} 塊大屏', including: '共 {n} 塊，包括{name}', inCity: '{city}的大屏',
+      seenBy: '日均人流', perDay: '每天 {n}', format: '形式', adLength: '單次時長', secs: '{n} 秒', playsEvery: '循環週期', mins: '{n} 分鐘', secShort: '{n} 秒',
+      shortest: '最短投放', size: '尺寸', screen: '螢幕', sides: '{n} 面', route: '路線',
+      'p.moment': '應援時刻', 'p.day': '全天', 'p.week': '一週', bookingLength: '投放時長',
+      'c.high': '估價（依據公開刊例價）', 'c.medium': '估價（依據產業報導）', 'c.low': '估價（參考周邊同類大屏）', 'c.none': '估價',
+      confirmed: '已確認價格', quoted: '媒體方報價', ratecard: 'Ciao 官方報價單 {d}',
+      unavailable: '此大屏不提供「{pkg}」投放，請在上方選擇其他時長。',
+      total: '合計', price: '價格', likely: '預計 {lo} 至 {hi}，視檔期與庫存而定', selection: '已選：{x}',
+      included: '已含', notOffered: '不提供', net: '（淨價）',
+      fxCny: '人民幣按 1 美元 = 6.7569 元換算，僅供參考，合約以美元計價。', fxOther: '依參考匯率換算，僅供參考，合約以美元計價。',
+      datesNote: '實際檔期以下單確認為準。', locPhoto: '位置示意圖。', photo: '圖片：',
+      add: '加入方案', inPlan: '已在方案中', update: '更新方案', added: '已加入方案', removed: '已移出方案', updated: '方案已更新',
+      estTotal: '預估合計', date: '日期', option: '選項', remove: '移除',
+      planNote: '一季可以組合多塊大屏：每個生日一次應援時刻，新品發佈投放一週。送出方案後，Ciao Group 會聯絡你確認檔期。',
+      planEmpty: '你的方案還是空的。在地球上打開任一大屏，選擇「加入方案」。排好一季的生日、紀念日與發佈活動，一次送出。',
+      sendInquiry: '送出諮詢', formTitle: '送出你的方案', formIntro: '留下聯絡方式，Ciao Group 會就此方案直接聯絡你。',
+      name: '姓名', email: '電郵', contact: '微信 / WhatsApp / 電話（選填）', occasion: '用途', 'o.birthday': '生日應援', 'o.anniversary': '紀念日', 'o.launch': '新品發佈', 'o.other': '其他',
+      message: '其他需求（選填）', back: '返回方案', sending: '傳送中…', formErr: '請填寫姓名與有效電郵，方便我們聯絡你。',
+      sentTitle: '諮詢已送出', sentText: 'Ciao Group 會盡快就你的方案聯絡你。',
+      fbTitle: '最後一步', fbText: '此頁面無法直接寄送郵件。請將下方內容寄到所示信箱，或複製後以任何方式傳送。',
+      emailBtn: '開啟郵件', copyBtn: '複製諮詢內容', copyAddr: '複製', copied: '已複製', selectCopy: '請選取文字後複製',
+      subject: '{name} 的大屏方案諮詢', inqHead: 'Ciao 大屏方案諮詢', planLbl: '方案', contactLbl: '聯絡方式', notes: '備註', about: '約'
+    },
+    ko: {
+      brandSub: '빌보드 아틀라스', language: '언어', currency: '통화', local: '현지 통화',
+      h1: '세계에서 가장 주목받는 스크린, 당신의 순간을 위한 가격.', lede: '생일 광고, 기념일, 런칭. 스크린을 고르고 전체 비용을 확인하세요.',
+      search: '도시 또는 빌보드 검색', everywhere: '전체', allFormats: '모든 형식', browse: '빌보드 보기', yourPlan: '내 플랜', close: '닫기',
+      loading: '빌보드를 불러오는 중…', loadFail: '빌보드 목록을 불러오지 못했습니다. 페이지를 새로고침하세요.', noMatch: '일치하는 빌보드가 없습니다. 도쿄나 런던 같은 도시 이름을 입력해 보세요.',
+      'r.USA': '미국', 'r.Europe': '유럽', 'r.Middle East': '중동', 'r.Asia': '아시아', 'r.China': '중국', 'r.Australia': '호주',
+      'k.screen': '스크린', 'k.truck': '광고 트럭', 'k.aerial': '항공 배너', 'tag.truck': '트럭', 'tag.aerial': '항공',
+      fromLbl: '부터', fromTpl: '{p}부터', nBoards: '빌보드 {n}개', including: '{name} 포함 {n}개', inCity: '{city}의 빌보드',
+      seenBy: '일 노출', perDay: '하루 {n}', format: '형식', adLength: '광고 길이', secs: '{n}초', playsEvery: '재생 주기', mins: '{n}분', secShort: '{n}초',
+      shortest: '최소 예약', size: '크기', screen: '스크린', sides: '{n}면', route: '경로',
+      'p.moment': '모먼트', 'p.day': '하루 종일', 'p.week': '1주', bookingLength: '예약 기간',
+      'c.high': '추정가 (공개 요금표 기준)', 'c.medium': '추정가 (업계 보도 기준)', 'c.low': '추정가 (인근 유사 스크린 기준)', 'c.none': '추정가',
+      confirmed: '확정 요금', quoted: '매체사 견적', ratecard: 'Ciao 공식 요금표 {d}',
+      unavailable: '이 빌보드는 {pkg} 예약을 제공하지 않습니다. 위에서 다른 기간을 선택하세요.',
+      total: '합계', price: '가격', likely: '날짜와 가용성에 따라 {lo}~{hi}', selection: '선택: {x}',
+      included: '포함', notOffered: '미제공', net: '(순가)',
+      fxCny: '위안화는 1달러 = 6.7569위안 기준 참고용입니다. 계약은 미국 달러로 진행됩니다.', fxOther: '참고용 환율로 환산했습니다. 계약은 미국 달러로 진행됩니다.',
+      datesNote: '날짜와 가용성은 예약 시 확정됩니다.', locPhoto: '위치 사진.', photo: '사진:',
+      add: '플랜에 추가', inPlan: '플랜에 있음', update: '플랜 업데이트', added: '플랜에 추가했습니다', removed: '플랜에서 제거했습니다', updated: '플랜을 업데이트했습니다',
+      estTotal: '예상 합계', date: '날짜', option: '옵션', remove: '제거',
+      planNote: '분기 동안 여러 빌보드를 조합하세요. 생일마다 짧은 모먼트, 런칭에는 1주. 플랜을 보내면 Ciao Group이 날짜 확정을 위해 연락드립니다.',
+      planEmpty: '플랜이 비어 있습니다. 지구본에서 빌보드를 열고 플랜에 추가를 누르세요. 한 분기의 생일, 기념일, 런칭을 모아 한 번에 보내세요.',
+      sendInquiry: '문의 보내기', formTitle: '플랜 보내기', formIntro: '연락처를 알려 주세요. Ciao Group이 이 플랜에 대해 직접 연락드립니다.',
+      name: '이름', email: '이메일', contact: '카카오톡, WhatsApp 또는 전화 (선택)', occasion: '목적', 'o.birthday': '생일', 'o.anniversary': '기념일', 'o.launch': '런칭', 'o.other': '기타',
+      message: '추가 요청 (선택)', back: '플랜으로 돌아가기', sending: '보내는 중…', formErr: '연락을 위해 이름과 올바른 이메일을 입력하세요.',
+      sentTitle: '문의를 보냈습니다', sentText: 'Ciao Group이 곧 플랜에 대해 연락드립니다.',
+      fbTitle: '마지막 단계', fbText: '이 페이지는 직접 이메일을 보낼 수 없습니다. 아래 내용을 표시된 주소로 보내거나 복사해서 원하는 방법으로 보내 주세요.',
+      emailBtn: '이메일 열기', copyBtn: '문의 내용 복사', copyAddr: '복사', copied: '복사했습니다', selectCopy: '텍스트를 선택해 복사하세요',
+      subject: '{name} 님의 빌보드 플랜 문의', inqHead: 'Ciao 빌보드 플랜 문의', planLbl: '플랜', contactLbl: '연락처', notes: '메모', about: '약'
+    },
+    ja: {
+      brandSub: 'ビルボード・アトラス', language: '言語', currency: '通貨', local: '現地通貨',
+      h1: '世界で最も見られるスクリーンを、あなたの瞬間のための価格で。', lede: '誕生日広告、記念日、ローンチ。スクリーンを選んで、費用の全体を確認。',
+      search: '都市またはビルボードを検索', everywhere: 'すべて', allFormats: 'すべての形式', browse: 'ビルボード一覧', yourPlan: 'マイプラン', close: '閉じる',
+      loading: 'ビルボードを読み込み中…', loadFail: 'ビルボード一覧を読み込めませんでした。ページを再読み込みしてください。', noMatch: '該当するビルボードがありません。東京やロンドンなどの都市名を入力してください。',
+      'r.USA': 'アメリカ', 'r.Europe': 'ヨーロッパ', 'r.Middle East': '中東', 'r.Asia': 'アジア', 'r.China': '中国', 'r.Australia': 'オーストラリア',
+      'k.screen': 'スクリーン', 'k.truck': 'アドトラック', 'k.aerial': 'バナー飛行', 'tag.truck': 'トラック', 'tag.aerial': '空中',
+      fromLbl: 'から', fromTpl: '{p}〜', nBoards: '{n}件のビルボード', including: '{name}を含む{n}件', inCity: '{city}のビルボード',
+      seenBy: '1日の視認者', perDay: '1日 {n}', format: '形式', adLength: '広告尺', secs: '{n}秒', playsEvery: 'ループ', mins: '{n}分', secShort: '{n}秒',
+      shortest: '最短掲出', size: 'サイズ', screen: 'スクリーン', sides: '{n}面', route: 'ルート',
+      'p.moment': 'モーメント', 'p.day': '終日', 'p.week': '1週間', bookingLength: '掲出期間',
+      'c.high': '概算（公開料金表に基づく）', 'c.medium': '概算（業界報道に基づく）', 'c.low': '概算（近隣の同等スクリーンに基づく）', 'c.none': '概算',
+      confirmed: '確定料金', quoted: '媒体社の見積もり', ratecard: 'Ciao 公式料金表 {d}',
+      unavailable: 'このビルボードは「{pkg}」での販売がありません。上で別の期間を選んでください。',
+      total: '合計', price: '価格', likely: '日程と空き状況により {lo}〜{hi}', selection: '選択中：{x}',
+      included: '込み', notOffered: 'なし', net: '（ネット）',
+      fxCny: '人民元は1ドル＝6.7569元の参考換算です。契約は米ドル建てです。', fxOther: '参考レートで換算しています。契約は米ドル建てです。',
+      datesNote: '日程と空き状況は予約時に確定します。', locPhoto: '場所の写真。', photo: '写真：',
+      add: 'プランに追加', inPlan: 'プランに追加済み', update: 'プランを更新', added: 'プランに追加しました', removed: 'プランから外しました', updated: 'プランを更新しました',
+      estTotal: '概算合計', date: '日付', option: 'オプション', remove: '削除',
+      planNote: '四半期で複数のビルボードを組み合わせましょう。誕生日ごとに短いモーメント、ローンチには1週間。プランを送ると、Ciao Group から日程確認のご連絡をします。',
+      planEmpty: 'プランは空です。地球儀でビルボードを開き、「プランに追加」を選んでください。四半期分の誕生日・記念日・ローンチをまとめて送れます。',
+      sendInquiry: '問い合わせる', formTitle: 'プランを送信', formIntro: 'ご連絡先を教えてください。このプランについて Ciao Group から直接ご連絡します。',
+      name: 'お名前', email: 'メール', contact: 'LINE・WhatsApp・電話（任意）', occasion: '目的', 'o.birthday': '誕生日', 'o.anniversary': '記念日', 'o.launch': 'ローンチ', 'o.other': 'その他',
+      message: 'その他のご要望（任意）', back: 'プランに戻る', sending: '送信中…', formErr: 'ご連絡のため、お名前と正しいメールアドレスを入力してください。',
+      sentTitle: '送信しました', sentText: 'プランについて Ciao Group からまもなくご連絡します。',
+      fbTitle: 'あと一歩', fbText: 'このページからは直接メールを送れません。下の内容を表示中のアドレスへ送るか、コピーしてお好きな方法で送ってください。',
+      emailBtn: 'メールを開く', copyBtn: '内容をコピー', copyAddr: 'コピー', copied: 'コピーしました', selectCopy: 'テキストを選択してコピーしてください',
+      subject: '{name} 様のビルボードプランのお問い合わせ', inqHead: 'Ciao ビルボードプランのお問い合わせ', planLbl: 'プラン', contactLbl: '連絡先', notes: '備考', about: '約'
+    }
+  };
+  const CJK_FONT = { 'zh-CN': 'Noto+Sans+SC', 'zh-TW': 'Noto+Sans+TC', ko: 'Noto+Sans+KR', ja: 'Noto+Sans+JP' };
+  const LANG_CUR = { 'zh-CN': 'CNY', 'zh-TW': 'USD', ko: 'KRW', ja: 'JPY', en: 'USD' };
+  const CURS = ['USD', 'CNY', 'HKD', 'TWD', 'KRW', 'JPY', 'SGD', 'EUR', 'GBP', 'AED', 'AUD', 'LOCAL'];
+  const REGIONS = ['USA', 'Europe', 'Middle East', 'Asia', 'China', 'Australia'];
+  const KINDS = ['screen', 'truck', 'aerial'];
+  const PKGS = ['moment', 'day', 'week'];
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const phone = () => matchMedia('(max-width: 820px)').matches;
+  const $ = (s) => document.querySelector(s);
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+  };
+  function guessLang() {
+    const n = (navigator.language || 'en').toLowerCase();
+    if (n.startsWith('zh')) return /tw|hk|mo|hant/.test(n) ? 'zh-TW' : 'zh-CN';
+    if (n.startsWith('ko')) return 'ko';
+    if (n.startsWith('ja')) return 'ja';
+    return 'en';
+  }
+  const S = { boards: [], byId: {}, clusters: [], fx: { USD: 1 }, i18n: {}, region: 'All', kind: 'All', q: '', sel: null, cluster: null,
+    pkg: 'moment', opt: null, view: null, form: {}, plan: store.get('ciao-plan', []) };
+  S.lang = store.get('ciao-lang', null) || guessLang();
+  if (!STR[S.lang]) S.lang = 'en';
+  S.cur = store.get('ciao-cur', null) || LANG_CUR[S.lang] || 'USD';
+
+  // ---------- i18n helpers ----------
+  function t(key, vars) {
+    let s = (STR[S.lang] && STR[S.lang][key]) ?? STR.en[key] ?? key;
+    if (vars) for (const k in vars) s = s.split('{' + k + '}').join(vars[k]);
+    return s;
+  }
+  const common = (k, fb) => (S.i18n[S.lang] && S.i18n[S.lang].common && S.i18n[S.lang].common[k]) || fb;
+  const tb = (b, f) => (b.i18n && b.i18n[S.lang] && b.i18n[S.lang][f]) || b[f];
+  const city = (b) => (S.i18n[S.lang] && S.i18n[S.lang].cities && S.i18n[S.lang].cities[b.city]) || b.city;
+  const country = (b) => (S.i18n[S.lang] && S.i18n[S.lang].countries && S.i18n[S.lang].countries[b.country]) || b.country;
+  const locale = () => ({ en: 'en-US', 'zh-CN': 'zh-CN', 'zh-TW': 'zh-TW', ko: 'ko-KR', ja: 'ja-JP' }[S.lang]);
+  function applyStatic() {
+    document.documentElement.lang = S.lang;
+    document.querySelectorAll('[data-t]').forEach((n) => { n.textContent = t(n.dataset.t); });
+    $('#q').placeholder = t('search'); $('#q').setAttribute('aria-label', t('search'));
+    $('#railClose').setAttribute('aria-label', t('close'));
+    $('#chips').setAttribute('aria-label', t('everywhere')); $('#kinds').setAttribute('aria-label', t('allFormats'));
+    $('#planBtn').setAttribute('aria-label', t('yourPlan'));
+    $('#langSel').setAttribute('aria-label', t('language')); $('#curSel').setAttribute('aria-label', t('currency'));
+    $('#langSel').innerHTML = LANGS.map(([k, l]) => `<option value="${k}" ${k === S.lang ? 'selected' : ''}>${l}</option>`).join('');
+    $('#curSel').innerHTML = CURS.map((c) => `<option value="${c}" ${c === S.cur ? 'selected' : ''}>${c === 'LOCAL' ? esc(t('local')) : c}</option>`).join('');
+    const fam = CJK_FONT[S.lang];
+    $('#cjkFont').href = fam ? `https://fonts.googleapis.com/css2?family=${fam}:wght@400;500;700&display=swap` : 'data:text/css,';
+    const l = $('#loading'); if (l) l.textContent = t('loading');
+  }
+
+  // ---------- money ----------
+  function curFor(b) {
+    if (S.cur !== 'LOCAL') return S.fx[S.cur] ? S.cur : 'USD';
+    return b && b.local_currency && S.fx[b.local_currency] ? b.local_currency : 'USD';
+  }
+  function money(usd, cur = 'USD') {
+    const v = usd * (S.fx[cur] || 1);
+    const frac = v < 10 && v % 1 ? 2 : 0;
+    try { return new Intl.NumberFormat(locale(), { style: 'currency', currency: cur, maximumFractionDigits: frac, minimumFractionDigits: frac }).format(v); }
+    catch { return cur + ' ' + Math.round(v).toLocaleString(); }
+  }
+  const planCur = () => (S.cur === 'LOCAL' ? 'USD' : curFor(null));
+
+  // ---------- pricing views ----------
+  function rcOptions(b) {
+    const out = [];
+    ((b.ratecard && b.ratecard.groups) || []).forEach((g, gi) => g.rows.forEach((r, ri) => {
+      if (r.addon || r.included) return;
+      const named = g.columns.length > 1 || g.columns[0] !== 'Price';
+      r.prices.forEach((p, ci) => { if (p != null) out.push({ key: `${gi}:${ri}:${ci}`, gi, ri, ci, price: p, named }); });
+    }));
+    return out;
+  }
+  function rcText(b, gi, ri) {
+    const tg = b.i18n && b.i18n[S.lang] && b.i18n[S.lang].ratecard && b.i18n[S.lang].ratecard.groups && b.i18n[S.lang].ratecard.groups[gi];
+    const g = b.ratecard.groups[gi];
+    const tr = tg && tg.rows && tg.rows[ri];
+    return { title: (tg && tg.title) || g.title, label: ri == null ? '' : ((tr && tr.label) || g.rows[ri].label), sub: ri == null ? '' : ((tr && tr.sub) || g.rows[ri].sub || '') };
+  }
+  const colName = (c) => common('col.' + c, c);
+  function optLabel(b, o) {
+    const tx = rcText(b, o.gi, o.ri);
+    return tx.label + (o.named ? ', ' + colName(b.ratecard.groups[o.gi].columns[o.ci]) : '');
+  }
+  function rcOption(b, key) { return rcOptions(b).find((o) => o.key === key) || null; }
+  function cheapestOpt(b) { return rcOptions(b).reduce((m, o) => (!m || o.price < m.price ? o : m), null); }
+  function fromPrice(b) {
+    if (b.ratecard) { const o = cheapestOpt(b); return o ? o.price : null; }
+    const vals = Object.values(b.packages || {}).filter(Boolean).map((p) => p.total.lo);
+    return vals.length ? Math.min(...vals) : null;
+  }
+  const firstPkg = (b) => PKGS.find((k) => b.packages && b.packages[k]) || 'day';
+  function itemPrice(p) {
+    const b = S.byId[p.id]; if (!b) return 0;
+    if (b.ratecard) { const o = rcOption(b, p.opt); return o ? o.price : 0; }
+    const q = b.packages[p.pkg]; return q ? q.total.mid : 0;
+  }
+  function itemLabel(p) {
+    const b = S.byId[p.id];
+    if (b.ratecard) { const o = rcOption(b, p.opt); return o ? optLabel(b, o) : ''; }
+    return t('p.' + p.pkg);
+  }
+  function lineText(b, l, pkg) {
+    let label = common('line.' + l.key, l.label), desc = l.desc;
+    if (l.key === 'tax') { label = `${common('tax.' + l.tax_name, l.tax_name || '')} ${Math.round((l.rate || 0) * 1000) / 10}%`.trim(); desc = common('desc.tax', l.desc); }
+    if (l.key === 'creative' || l.key === 'management') desc = common('desc.' + l.key, l.desc);
+    if (l.key === 'approvals') desc = tb(b, 'approvals_desc') || common('desc.approvals', l.desc);
+    if (l.key === 'screen') desc = pkg === 'moment' ? (tb(b, 'moment_desc') || l.desc) : common('pkg.' + pkg, l.desc);
+    return { label, desc };
+  }
+
+  // ---------- data ----------
+  function cluster(boards) {
+    const m = new Map();
+    for (const b of boards) {
+      const k = b.city + '|' + b.country_code;
+      if (!m.has(k)) m.set(k, { key: k, boards: [] });
+      m.get(k).boards.push(b);
+    }
+    return [...m.values()].map((c) => ({ ...c, lat: c.boards.reduce((s, b) => s + b.lat, 0) / c.boards.length, lng: c.boards.reduce((s, b) => s + b.lng, 0) / c.boards.length }));
+  }
+  function matches(b) {
+    if (S.region !== 'All' && b.region !== S.region) return false;
+    if (S.kind !== 'All' && (b.kind || 'screen') !== S.kind) return false;
+    if (!S.q) return true;
+    const hay = [b.name, tb(b, 'name'), b.city, city(b), b.country, country(b), b.region, t('r.' + b.region), t('k.' + (b.kind || 'screen'))].join(' ').toLowerCase();
+    return S.q.split(/\s+/).every((w) => hay.includes(w));
+  }
+
+  // ---------- globe ----------
+  let world;
+  function initGlobe() {
+    const el = $('#globe');
+    world = new Globe(el, { animateIn: !reduceMotion })
+      .globeImageUrl('assets/earth-night.jpg')
+      .bumpImageUrl('assets/earth-topology.png')
+      .backgroundColor('rgba(0,0,0,0)')
+      .showAtmosphere(true).atmosphereColor('#5aa7e1').atmosphereAltitude(0.16)
+      .htmlElementsData(S.clusters).htmlLat('lat').htmlLng('lng').htmlAltitude(0.008).htmlTransitionDuration(0).htmlElement(markerEl)
+      .ringsData([]).ringLat('lat').ringLng('lng').ringColor(() => (x) => `rgba(115,212,58,${1 - x})`)
+      .ringMaxRadius(3.2).ringPropagationSpeed(2.4).ringRepeatPeriod(1100)
+      .width(el.clientWidth).height(el.clientHeight);
+    if (typeof world.htmlElementVisibilityModifier === 'function') {
+      world.htmlElementVisibilityModifier((node, visible) => { node.style.opacity = visible ? '' : '0'; node.style.pointerEvents = visible ? '' : 'none'; });
+    }
+    const c = world.controls();
+    c.autoRotate = !reduceMotion; c.autoRotateSpeed = 0.35; c.enableDamping = true; c.minDistance = 130; c.maxDistance = 520;
+    world.pointOfView({ lat: 28, lng: 20, altitude: phone() ? 2.9 : 2.3 }, 0);
+    el.addEventListener('pointerdown', () => { c.autoRotate = false; });
+    if (typeof world.onZoom === 'function') world.onZoom((pov) => document.body.classList.toggle('zoomed', pov.altitude < 1.35));
+    fetch('assets/countries-110m.json').then((r) => r.json()).then((topo) => {
+      if (!window.topojson) return;
+      const feats = topojson.feature(topo, topo.objects.countries).features.filter((f) => f.properties.name !== 'Antarctica');
+      world.polygonsData(feats).polygonAltitude(0.004)
+        .polygonCapColor(() => 'rgba(200, 222, 240, 0.035)').polygonSideColor(() => 'rgba(0, 0, 0, 0)')
+        .polygonStrokeColor(() => 'rgba(170, 205, 235, 0.42)')
+        .polygonLabel((f) => esc((S.i18n[S.lang] && S.i18n[S.lang].countries && S.i18n[S.lang].countries[f.properties.name]) || f.properties.name))
+        .polygonsTransitionDuration(0);
+    }).catch(() => {});
+    addEventListener('resize', () => world.width(el.clientWidth).height(el.clientHeight));
+  }
+  function markerEl(c) {
+    const wrap = document.createElement('div');
+    const n = c.boards.length;
+    wrap.className = 'mk' + (n > 1 ? ' multi' : '') + (n >= 3 ? ' major' : '');
+    wrap.dataset.key = c.key;
+    wrap.innerHTML = `<button type="button"><span class="dot">${n > 1 ? n : ''}</span></button><span class="lbl" aria-hidden="true"></span>`;
+    const btn = wrap.firstChild;
+    btn.addEventListener('mouseenter', () => showPeek(c, btn));
+    btn.addEventListener('mouseleave', hidePeek);
+    btn.addEventListener('focus', () => showPeek(c, btn));
+    btn.addEventListener('blur', hidePeek);
+    btn.addEventListener('click', (e) => { e.stopPropagation(); hidePeek(); openCluster(c); });
+    labelMarker(wrap, c);
+    return wrap;
+  }
+  function labelMarker(node, c) {
+    const b = c.boards[0], n = c.boards.length;
+    node.querySelector('.lbl').textContent = city(b);
+    node.querySelector('button').setAttribute('aria-label', n > 1 ? `${city(b)}, ${t('nBoards', { n })}` : `${tb(b, 'name')}, ${city(b)}`);
+  }
+  function refreshMarkers() {
+    document.querySelectorAll('.mk').forEach((node) => {
+      const c = S.clusters.find((x) => x.key === node.dataset.key);
+      node.classList.toggle('dim', !c.boards.some(matches));
+      node.classList.toggle('active', !!(S.cluster && S.cluster.key === c.key));
+      labelMarker(node, c);
+    });
+  }
+  function flyTo(c) {
+    world.controls().autoRotate = false;
+    const alt = Math.min(world.pointOfView().altitude, 1.5);
+    world.pointOfView({ lat: c.lat - (phone() ? 12 : 0), lng: c.lng, altitude: Math.max(alt, 0.9) }, reduceMotion ? 0 : 1200);
+    world.ringsData([{ lat: c.lat, lng: c.lng }]);
+  }
+
+  // ---------- peek ----------
+  function showPeek(c, btn) {
+    if (phone()) return;
+    const vis = c.boards.filter(matches); const list = vis.length ? vis : c.boards;
+    const b = list.find((x) => x.img) || list[0];
+    const prices = list.map(fromPrice).filter((v) => v != null);
+    const fp = prices.length ? Math.min(...prices) : null;
+    const p = $('#peek');
+    p.innerHTML = `${b.img ? `<img src="${esc(b.img)}" alt="">` : ''}<div class="b"><b>${esc(list.length > 1 ? city(b) : tb(b, 'name'))}</b>
+      <span>${esc(list.length > 1 ? t('including', { n: list.length, name: tb(b, 'name') }) : `${city(b)}, ${country(b)}`)}</span>
+      ${fp != null ? `<span class="from num">${esc(t('fromTpl', { p: money(fp, curFor(b)) }))}</span>` : ''}</div>`;
+    p.hidden = false;
+    const r = btn.getBoundingClientRect(), w = 260, h = p.offsetHeight;
+    let x = r.right + 12, y = r.top - h / 2;
+    if (x + w > innerWidth - 12) x = r.left - w - 12;
+    y = Math.max(12, Math.min(y, innerHeight - h - 12));
+    p.style.left = x + 'px'; p.style.top = y + 'px';
+  }
+  function hidePeek() { $('#peek').hidden = true; }
+
+  // ---------- rail ----------
+  function renderChips() {
+    const counts = { All: S.boards.length };
+    S.boards.forEach((b) => { counts[b.region] = (counts[b.region] || 0) + 1; });
+    $('#chips').innerHTML = ['All', ...REGIONS].filter((r) => counts[r]).map((r) =>
+      `<button class="chip" type="button" data-r="${esc(r)}" aria-pressed="${S.region === r}">${esc(r === 'All' ? t('everywhere') : t('r.' + r))}<em>${counts[r]}</em></button>`).join('');
+    const kc = {};
+    S.boards.forEach((b) => { const k = b.kind || 'screen'; kc[k] = (kc[k] || 0) + 1; });
+    const kinds = KINDS.filter((k) => kc[k]);
+    $('#kinds').hidden = kinds.length < 2;
+    $('#kinds').innerHTML = ['All', ...kinds].map((k) =>
+      `<button class="chip" type="button" data-k="${k}" aria-pressed="${S.kind === k}">${esc(k === 'All' ? t('allFormats') : t('k.' + k))}${k === 'All' ? '' : `<em>${kc[k]}</em>`}</button>`).join('');
+  }
+  const kindTag = (b) => (b.kind && b.kind !== 'screen' ? `<i class="kind">${esc(t('tag.' + b.kind))}</i>` : '');
+  function renderList() {
+    const vis = S.boards.filter(matches);
+    if (!vis.length) { $('#list').innerHTML = `<p class="empty">${esc(t('noMatch'))}</p>`; return; }
+    let html = '';
+    for (const r of REGIONS) {
+      const rows = vis.filter((b) => b.region === r);
+      if (!rows.length) continue;
+      html += `<h2>${esc(t('r.' + r))}</h2>` + rows.map((b) => {
+        const fp = fromPrice(b);
+        return `<button class="row${S.sel && S.sel.id === b.id ? ' active' : ''}" type="button" data-id="${esc(b.id)}">
+          ${b.img ? `<img src="${esc(b.img)}" alt="" loading="lazy">` : '<span class="noimg"></span>'}
+          <span class="t"><b>${esc(tb(b, 'name'))}</b><span>${esc(city(b))}, ${esc(country(b))}${kindTag(b)}</span></span>
+          <span class="p">${fp != null ? `<small>${esc(t('fromLbl'))}</small>${money(fp, curFor(b))}` : ''}</span></button>`;
+      }).join('');
+    }
+    $('#list').innerHTML = html;
+  }
+
+  // ---------- billboard panel ----------
+  function openCluster(c, boardId) {
+    S.cluster = c;
+    selectBoard(boardId ? S.byId[boardId] : (c.boards.find(matches) || c.boards[0]));
+    flyTo(c);
+  }
+  function selectBoard(b) {
+    S.sel = b; S.view = 'board';
+    if (b.ratecard) { const ip = S.plan.find((p) => p.id === b.id); S.opt = ip && rcOption(b, ip.opt) ? ip.opt : (cheapestOpt(b) || {}).key; }
+    else S.pkg = b.packages[S.pkg] ? S.pkg : firstPkg(b);
+    document.body.classList.add('panel-open'); document.body.classList.remove('rail-open');
+    renderPanel(); refreshMarkers(); renderList();
+    try { history.replaceState(null, '', '#' + b.id); } catch {}
+  }
+  function closePanel() {
+    S.sel = null; S.cluster = null; S.view = null;
+    $('#panel').hidden = true; document.body.classList.remove('panel-open');
+    if (world) world.ringsData([]);
+    refreshMarkers(); renderList();
+    try { history.replaceState(null, '', location.pathname); } catch {}
+  }
+  const fact = (label, v) => (v ? `<div><dt>${esc(label)}</dt><dd>${esc(v)}</dd></div>` : '');
+  function fmtAud(n) { if (!n) return ''; try { return t('perDay', { n: new Intl.NumberFormat(locale(), { notation: 'compact', maximumFractionDigits: 1 }).format(n) }); } catch { return t('perDay', { n }); } }
+  const fmtLoop = (s) => (s ? (s >= 60 ? t('mins', { n: +(s / 60).toFixed(s % 60 ? 1 : 0) }) : t('secShort', { n: s })) : '');
+  function fmtDate(d) { try { return new Date(d + 'T00:00:00').toLocaleDateString(locale(), { year: 'numeric', month: 'short', day: 'numeric' }); } catch { return d; } }
+  function fxNote(cur) { return cur === 'CNY' ? t('fxCny') : cur !== 'USD' ? t('fxOther') : ''; }
+
+  function rateCardView(b, cur) {
+    const rc = b.ratecard, sel = rcOption(b, S.opt);
+    const groups = rc.groups.map((g, gi) => {
+      const tg = rcText(b, gi);
+      const head = g.columns.length > 1 || g.columns[0] !== 'Price' ? `<thead><tr><th></th>${g.columns.map((c) => `<th>${esc(colName(c))}</th>`).join('')}</tr></thead>` : '';
+      const rows = g.rows.map((r, ri) => {
+        const tx = rcText(b, gi, ri);
+        return `<tr><td><b>${esc(tx.label)}</b>${tx.sub ? `<small>${esc(tx.sub)}</small>` : ''}</td>${r.prices.map((p, ci) => {
+          if (r.included) return `<td><span class="fixed">${esc(t('included'))}</span></td>`;
+          if (p == null) return `<td><span class="na" aria-label="${esc(t('notOffered'))}">·</span></td>`;
+          if (r.addon) return `<td><span class="fixed">${money(p, cur)} ${esc(common('unit.' + r.unit, r.unit || ''))}</span></td>`;
+          const key = `${gi}:${ri}:${ci}`;
+          return `<td><button class="opt" type="button" data-opt="${key}" aria-pressed="${S.opt === key}" aria-label="${esc(tx.label)}, ${esc(colName(g.columns[ci]))}: ${money(p, cur)}">${money(p, cur)}</button></td>`;
+        }).join('')}</tr>`;
+      }).join('');
+      return `<div><h3>${esc(tg.title)}${g.net ? ' ' + esc(t('net')) : ''}</h3><div class="rcwrap"><table>${head}<tbody>${rows}</tbody></table></div></div>`;
+    }).join('');
+    return `<div class="meta"><span class="badge ok">${ICON.check}${esc(t('ratecard', { d: fmtDate(rc.issued) }))}</span></div>
+      <div class="rc">${groups}</div>
+      ${sel ? `<div class="pick"><p>${esc(t('selection', { x: optLabel(b, sel) }))}</p><div class="total"><span>${esc(t('price'))}</span><strong>${money(sel.price, cur)}</strong></div></div>` : ''}
+      <p class="note">${esc([fxNote(cur), t('datesNote')].filter(Boolean).join(' '))}</p>`;
+  }
+  function estimateView(b, cur) {
+    const q = b.packages[S.pkg];
+    const seg = `<div class="seg" role="group" aria-label="${esc(t('bookingLength'))}">${PKGS.map((k) =>
+      `<button type="button" data-pkg="${k}" aria-pressed="${S.pkg === k}" ${b.packages[k] ? '' : 'disabled'}>${esc(t('p.' + k))}</button>`).join('')}</div>
+      ${q ? `<p class="pkgdesc">${esc(lineText(b, q.lines[0], S.pkg).desc)}</p>` : ''}`;
+    if (!q) return seg + `<div class="unavail">${esc(t('unavailable', { pkg: t('p.' + S.pkg) }))}</div>`;
+    const badge = q.source === 'confirmed' ? `<span class="badge ok">${ICON.check}${esc(t('confirmed'))}</span>`
+      : q.source === 'quoted' ? `<span class="badge ok">${esc(t('quoted'))}</span>` : `<span class="badge">${esc(t('c.' + (b.confidence || 'none')))}</span>`;
+    return seg + `<div class="meta">${badge}</div>
+      <div>${q.lines.map((l) => { const x = lineText(b, l, S.pkg); return `<div class="line"><b>${esc(x.label)}</b><span class="amt">${money(l.mid, cur)}</span><small>${esc(x.desc)}</small></div>`; }).join('')}
+        <div class="total"><span>${esc(t('total'))}</span><strong>${money(q.total.mid, cur)}</strong></div>
+        ${q.total.lo !== q.total.hi ? `<div class="range">${esc(t('likely', { lo: money(q.total.lo, cur), hi: money(q.total.hi, cur) }))}</div>` : ''}
+      </div>${fxNote(cur) ? `<p class="note">${esc(fxNote(cur))}</p>` : ''}`;
+  }
+  function planState(b) {
+    const i = S.plan.findIndex((p) => p.id === b.id);
+    if (i < 0) return { i, label: t('add'), icon: ICON.plus, cls: '' };
+    const same = b.ratecard ? S.plan[i].opt === S.opt : S.plan[i].pkg === S.pkg;
+    return same ? { i, same, label: t('inPlan'), icon: ICON.check, cls: ' ghost' } : { i, label: t('update'), icon: ICON.check, cls: '' };
+  }
+  function renderPanel() {
+    const b = S.sel, c = S.cluster, P = $('#panel'), cur = curFor(b);
+    const sibs = c && c.boards.length > 1 ? `<div class="siblings" role="list" aria-label="${esc(t('inCity', { city: city(b) }))}">${c.boards.map((s) =>
+      `<button class="sib" type="button" role="listitem" data-id="${esc(s.id)}" aria-current="${s.id === b.id}">${s.img ? `<img src="${esc(s.img)}" alt="">` : '<span class="noimg"></span>'}<span>${esc(tb(s, 'name'))}</span></button>`).join('')}</div>` : '';
+    const cr = b.credit;
+    const credit = cr && cr.page ? `<p class="credit">${cr.shows && !/exact/i.test(cr.shows) ? esc(t('locPhoto')) + ' ' : ''}${esc(t('photo'))} <a href="${esc(cr.page)}" target="_blank" rel="noopener">${esc(cr.author || 'Wikimedia Commons')}</a>${cr.license ? ', ' + esc(cr.license) : ''}</p>` : '';
+    const tk = b.truck || {};
+    const canAdd = b.ratecard ? !!rcOption(b, S.opt) : !!b.packages[S.pkg];
+    const ps = planState(b);
+    P.innerHTML = `<div class="scroll">
+      <div class="hero">${b.img ? `<img src="${esc(b.img)}" alt="${esc(tb(b, 'name'))}">` : '<div class="noimg"></div>'}
+        <button class="x" type="button" data-act="close" aria-label="${esc(t('close'))}">${ICON.x}</button></div>
+      ${credit}${sibs}
+      <div class="body">
+        <div><div class="where">${ICON.pin}${esc(city(b))}, ${esc(country(b))}${kindTag(b)}</div><h2>${esc(tb(b, 'name'))}</h2></div>
+        ${tb(b, 'why_iconic') ? `<p class="why">${esc(tb(b, 'why_iconic'))}</p>` : ''}
+        <dl class="facts">
+          ${fact(t('seenBy'), fmtAud(b.daily_audience))}
+          ${fact(t('format'), tb(b, 'format'))}
+          ${fact(t('adLength'), b.spot_length_sec ? t('secs', { n: b.spot_length_sec }) : '')}
+          ${fact(t('playsEvery'), fmtLoop(b.loop_length_sec))}
+          ${fact(t('shortest'), tb(b, 'min_booking'))}
+          ${fact(t('size'), tb(b, 'size') || tk.screen_size)}
+          ${fact(t('screen'), tk.screen_type ? tk.screen_type + (tk.sides ? ', ' + t('sides', { n: tk.sides }) : '') : '')}
+        </dl>
+        ${tb(b, 'route') ? `<p class="note"><b>${esc(t('route'))}.</b> ${esc(tb(b, 'route'))}</p>` : ''}
+        ${b.ratecard ? rateCardView(b, cur) : estimateView(b, cur)}
+      </div></div>
+      <div class="foot"><button class="cta${ps.cls}" type="button" data-act="plan" ${canAdd ? '' : 'disabled'}>${ps.icon}${esc(ps.label)}</button></div>`;
+    P.hidden = false;
+  }
+
+  // ---------- plan ----------
+  const planTotal = () => S.plan.reduce((s, p) => s + itemPrice(p), 0);
+  function savePlan() { store.set('ciao-plan', S.plan); $('#planCount').textContent = S.plan.length; }
+  function togglePlan() {
+    const b = S.sel, ps = planState(b);
+    const prev = ps.i >= 0 ? S.plan[ps.i] : {};
+    const item = b.ratecard ? { id: b.id, opt: S.opt, date: prev.date || '' } : { id: b.id, pkg: S.pkg, date: prev.date || '' };
+    let msg;
+    if (ps.i >= 0 && ps.same) { S.plan.splice(ps.i, 1); msg = t('removed'); }
+    else if (ps.i >= 0) { S.plan[ps.i] = item; msg = t('updated'); }
+    else { S.plan.push(item); msg = t('added'); }
+    savePlan(); renderPanel(); toast(msg);
+  }
+  function openPlan() {
+    S.sel = null; S.cluster = null; S.view = 'plan'; if (world) world.ringsData([]); refreshMarkers();
+    document.body.classList.add('panel-open'); document.body.classList.remove('rail-open');
+    renderPlan();
+  }
+  function renderPlan() {
+    const P = $('#panel'), cur = planCur();
+    S.plan = S.plan.filter((p) => { const b = S.byId[p.id]; return b && (b.ratecard ? rcOption(b, p.opt) : b.packages[p.pkg]); });
+    savePlan();
+    const items = S.plan.map((p, i) => {
+      const b = S.byId[p.id];
+      const opts = b.ratecard ? rcOptions(b).map((o) => `<option value="${o.key}" ${o.key === p.opt ? 'selected' : ''}>${esc(optLabel(b, o))}</option>`)
+        : PKGS.filter((k) => b.packages[k]).map((k) => `<option value="${k}" ${k === p.pkg ? 'selected' : ''}>${esc(t('p.' + k))}</option>`);
+      return `<div class="pitem">${b.img ? `<img src="${esc(b.img)}" alt="">` : '<span class="noimg"></span>'}
+        <div class="t"><b>${esc(tb(b, 'name'))}</b><span>
+          <select data-i="${i}" id="plan-opt-${i}" aria-label="${esc(t('option'))}: ${esc(tb(b, 'name'))}">${opts.join('')}</select>
+          <input type="date" data-d="${i}" id="plan-date-${i}" value="${esc(p.date || '')}" aria-label="${esc(t('date'))}: ${esc(tb(b, 'name'))}"></span></div>
+        <span class="amt">${money(itemPrice(p), cur)}</span>
+        <button class="iconbtn" type="button" data-rm="${i}" aria-label="${esc(t('remove'))}: ${esc(tb(b, 'name'))}">${ICON.trash}</button></div>`;
+    }).join('');
+    P.innerHTML = `<div class="scroll"><div class="body">
+        <div class="head"><h2>${esc(t('yourPlan'))}</h2><button class="iconbtn" type="button" data-act="close" aria-label="${esc(t('close'))}">${ICON.x}</button></div>
+        ${S.plan.length ? `<div>${items}</div>
+          <div class="total"><span>${esc(t('estTotal'))}</span><strong>${money(planTotal(), cur)}</strong></div>
+          <p class="note">${esc([t('planNote'), fxNote(cur)].filter(Boolean).join(' '))}</p>` : `<p class="note">${esc(t('planEmpty'))}</p>`}
+      </div></div>
+      ${S.plan.length ? `<div class="foot"><button class="cta" type="button" data-act="inquire">${ICON.send}${esc(t('sendInquiry'))}</button></div>` : ''}`;
+    P.hidden = false;
+  }
+
+  // ---------- inquiry ----------
+  function renderForm(err) {
+    S.view = 'form';
+    const f = S.form;
+    const occ = ['birthday', 'anniversary', 'launch', 'other'];
+    $('#panel').innerHTML = `<div class="scroll"><div class="body">
+        <div class="head"><h2>${esc(t('formTitle'))}</h2><button class="iconbtn" type="button" data-act="close" aria-label="${esc(t('close'))}">${ICON.x}</button></div>
+        <p class="note">${esc(t('formIntro'))}</p>
+        <form class="form" id="inqForm" novalidate>
+          <div class="field"><label for="f-name">${esc(t('name'))}</label><input id="f-name" name="name" autocomplete="name" required value="${esc(f.name || '')}"></div>
+          <div class="field"><label for="f-email">${esc(t('email'))}</label><input id="f-email" name="email" type="email" autocomplete="email" required value="${esc(f.email || '')}"></div>
+          <div class="field"><label for="f-contact">${esc(t('contact'))}</label><input id="f-contact" name="contact" value="${esc(f.contact || '')}"></div>
+          <div class="field"><label for="f-occasion">${esc(t('occasion'))}</label><select id="f-occasion" name="occasion">${occ.map((o) => `<option value="${o}" ${f.occasion === o ? 'selected' : ''}>${esc(t('o.' + o))}</option>`).join('')}</select></div>
+          <div class="field"><label for="f-message">${esc(t('message'))}</label><textarea id="f-message" name="message">${esc(f.message || '')}</textarea></div>
+          ${err ? `<p class="err" role="alert">${esc(err)}</p>` : ''}
+        </form>
+        <div class="summary">${esc(planSummary())}</div>
+      </div></div>
+      <div class="foot"><button class="cta" type="submit" form="inqForm" id="inqSend">${ICON.send}${esc(t('sendInquiry'))}</button>
+        <button class="cta ghost" type="button" data-act="toplan">${esc(t('back'))}</button></div>`;
+  }
+  function planSummary() {
+    const cur = planCur();
+    const lines = S.plan.map((p) => { const b = S.byId[p.id];
+      return `- ${tb(b, 'name')} (${city(b)}), ${itemLabel(p)}${p.date ? ', ' + p.date : ''}: ${b.ratecard ? '' : t('about') + ' '}${money(itemPrice(p), cur)}`; });
+    return `${t('planLbl')}:\n${lines.join('\n')}\n${t('estTotal')}: ${money(planTotal(), cur)}`;
+  }
+  function inquiryText() {
+    const f = S.form;
+    return [t('inqHead'), '', `${t('name')}: ${f.name}`, `${t('email')}: ${f.email}`, f.contact ? `${t('contactLbl')}: ${f.contact}` : null, `${t('occasion')}: ${t('o.' + f.occasion)}`,
+      '', planSummary(), f.message ? `\n${t('notes')}: ${f.message}` : null, '', `(${LANGS.find((l) => l[0] === S.lang)[1]}, ${new Date().toISOString().slice(0, 10)})`].filter((x) => x !== null).join('\n');
+  }
+  async function submitInquiry(e) {
+    e.preventDefault();
+    const fd = new FormData($('#inqForm'));
+    S.form = Object.fromEntries([...fd.entries()].map(([k, v]) => [k, String(v).trim()]));
+    if (!S.form.name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(S.form.email || '')) return renderForm(t('formErr'));
+    const btn = $('#inqSend'); btn.disabled = true; btn.textContent = t('sending');
+    if (INQUIRY.endpoint) {
+      try {
+        const ctl = new AbortController(); const timer = setTimeout(() => ctl.abort(), 12000);
+        const res = await fetch(INQUIRY.endpoint, { method: 'POST', signal: ctl.signal, headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({ _subject: t('subject', { name: S.form.name }), _template: 'box', _replyto: S.form.email, name: S.form.name, email: S.form.email,
+            contact: S.form.contact || '', occasion: t('o.' + S.form.occasion), plan: planSummary(), message: S.form.message || '', language: S.lang }) });
+        clearTimeout(timer);
+        const j = await res.json().catch(() => ({}));
+        if (res.ok && String(j.success) === 'true') return renderSent();  // FormSubmit answers 200 with success:false until activated
+      } catch {}
+    }
+    renderFallback();
+  }
+  function renderSent() {
+    S.view = 'sent';
+    $('#panel').innerHTML = `<div class="scroll"><div class="body">
+      <div class="head"><span></span><button class="iconbtn" type="button" data-act="close" aria-label="${esc(t('close'))}">${ICON.x}</button></div>
+      <div class="done"><span class="tick">${ICON.check}</span><h2>${esc(t('sentTitle'))}</h2><p class="note">${esc(t('sentText'))}</p></div></div></div>`;
+  }
+  function renderFallback() {
+    S.view = 'fallback';
+    const body = inquiryText(), subject = t('subject', { name: S.form.name });
+    const mailto = `mailto:${INQUIRY.to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    $('#panel').innerHTML = `<div class="scroll"><div class="body">
+        <div class="head"><h2>${esc(t('fbTitle'))}</h2><button class="iconbtn" type="button" data-act="close" aria-label="${esc(t('close'))}">${ICON.x}</button></div>
+        <p class="note">${esc(t('fbText'))}</p>
+        <div class="addr"><span>${esc(INQUIRY.to)}</span><button class="iconbtn" type="button" data-act="copyaddr">${ICON.copy}${esc(t('copyAddr'))}</button></div>
+        <div class="summary" id="inqText">${esc(body)}</div>
+      </div></div>
+      <div class="foot"><a class="cta" href="${esc(mailto)}" target="_blank" rel="noopener" style="text-decoration:none">${ICON.send}${esc(t('emailBtn'))}</a>
+        <button class="cta ghost" type="button" data-act="copyinq">${ICON.copy}${esc(t('copyBtn'))}</button></div>`;
+  }
+  async function copyText(text, el) {
+    try { await navigator.clipboard.writeText(text); toast(t('copied')); }
+    catch {
+      if (el) { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+      toast(t('selectCopy'));
+    }
+  }
+  let tt;
+  function toast(msg) {
+    document.querySelectorAll('.toast').forEach((x) => x.remove());
+    const n = document.createElement('div'); n.className = 'toast'; n.setAttribute('role', 'status'); n.textContent = msg;
+    document.body.appendChild(n); clearTimeout(tt); tt = setTimeout(() => n.remove(), 1800);
+  }
+
+  // ---------- events ----------
+  function rerender() {
+    renderChips(); renderList(); refreshMarkers();
+    if ($('#panel').hidden) return;
+    if (S.view === 'board' && S.sel) renderPanel();
+    else if (S.view === 'plan') renderPlan();
+    else if (S.view === 'form') renderForm();
+  }
+  function bind() {
+    $('#chips').addEventListener('click', (e) => { const b = e.target.closest('.chip'); if (b) { S.region = b.dataset.r; rerender(); } });
+    $('#kinds').addEventListener('click', (e) => { const b = e.target.closest('.chip'); if (b) { S.kind = b.dataset.k; rerender(); } });
+    $('#langSel').addEventListener('change', (e) => { S.lang = e.target.value; store.set('ciao-lang', S.lang); applyStatic(); rerender(); });
+    $('#curSel').addEventListener('change', (e) => { S.cur = e.target.value; store.set('ciao-cur', S.cur); rerender(); });
+    $('#q').addEventListener('input', (e) => { S.q = e.target.value.trim().toLowerCase(); renderList(); refreshMarkers(); });
+    $('#list').addEventListener('click', (e) => {
+      const r = e.target.closest('.row'); if (!r) return;
+      const b = S.byId[r.dataset.id]; openCluster(S.clusters.find((c) => c.boards.includes(b)), b.id);
+    });
+    const P = $('#panel');
+    P.addEventListener('click', (e) => {
+      const el = e.target.closest('button'); if (!el) return;
+      const act = el.dataset.act;
+      if (act === 'close') return closePanel();
+      if (act === 'plan') return togglePlan();
+      if (act === 'inquire') return renderForm();
+      if (act === 'toplan') { S.view = 'plan'; return renderPlan(); }
+      if (act === 'copyinq') return copyText(inquiryText(), $('#inqText'));
+      if (act === 'copyaddr') return copyText(INQUIRY.to, el.previousElementSibling);
+      if (el.dataset.pkg) { S.pkg = el.dataset.pkg; return renderPanel(); }
+      if (el.dataset.opt) { S.opt = el.dataset.opt; return renderPanel(); }
+      if (el.dataset.rm != null) { S.plan.splice(+el.dataset.rm, 1); savePlan(); return renderPlan(); }
+      if (el.dataset.id) selectBoard(S.byId[el.dataset.id]);
+    });
+    P.addEventListener('change', (e) => {
+      const n = e.target;
+      if (n.matches('select[data-i]')) { const p = S.plan[+n.dataset.i]; if (S.byId[p.id].ratecard) p.opt = n.value; else p.pkg = n.value; savePlan(); renderPlan(); }
+      if (n.matches('input[data-d]')) { S.plan[+n.dataset.d].date = n.value; savePlan(); }
+    });
+    P.addEventListener('input', (e) => { if (e.target.form && e.target.form.id === 'inqForm') S.form[e.target.name] = e.target.value; });
+    P.addEventListener('submit', (e) => { if (e.target.id === 'inqForm') submitInquiry(e); });
+    $('#planBtn').addEventListener('click', openPlan);
+    $('#railOpen').addEventListener('click', () => document.body.classList.add('rail-open'));
+    $('#railClose').addEventListener('click', () => document.body.classList.remove('rail-open'));
+    $('#globe').addEventListener('click', () => document.body.classList.remove('rail-open'));
+    addEventListener('keydown', (e) => { if (e.key === 'Escape') { if (!$('#panel').hidden) closePanel(); document.body.classList.remove('rail-open'); } });
+  }
+
+  async function boot() {
+    applyStatic();
+    let data;
+    try {
+      const res = await fetch('data/boards.json', { cache: 'no-cache' });
+      if (!res.ok) throw new Error(res.status);
+      data = await res.json();
+    } catch { $('#loading').textContent = t('loadFail'); return; }
+    S.fx = data.meta.fx_per_usd || { USD: 1 };
+    S.i18n = data.meta.i18n || {};
+    S.boards = data.boards;
+    S.boards.forEach((b) => { S.byId[b.id] = b; });
+    S.clusters = cluster(S.boards);
+    savePlan(); renderChips(); renderList(); bind();
+    if (typeof Globe !== 'function') { $('#loading').textContent = t('loadFail'); return; }
+    initGlobe();
+    $('#loading').remove();
+    refreshMarkers();
+    const hash = location.hash.slice(1);
+    if (hash === 'plan') setTimeout(openPlan, 400);
+    else if (hash && S.byId[hash]) { const b = S.byId[hash]; setTimeout(() => openCluster(S.clusters.find((c) => c.boards.includes(b)), b.id), 600); }
+  }
+  boot();
+})();
+</script>
+
+</html>
