@@ -925,6 +925,7 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
         .pathColor(() => 'rgba(67, 197, 173, 0.5)').pathStroke(null).pathDashLength(0.012).pathDashGap(0.012)
         .pathDashAnimateTime(reduceMotion ? 0 : 160000).pathTransitionDuration(0);
     }
+    upgradeGlobe();
     const c = world.controls();
     c.autoRotate = !reduceMotion; c.autoRotateSpeed = 0.35; c.enableDamping = true; c.minDistance = 130; c.maxDistance = 520;
     world.pointOfView({ lat: 28, lng: phone() ? -4 : 20, altitude: phone() ? 3.1 : 2.3 }, 0);  // phones start further west so the astronaut is in view
@@ -940,6 +941,29 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
         .polygonsTransitionDuration(0);
     }).catch(() => {});
     addEventListener('resize', () => world.width(el.clientWidth).height(el.clientHeight));
+  }
+  // Crisp when zoomed: the 4K texture loads first (fast start), then desktop browsers swap in the 8K NASA night map,
+  // switch to finer country borders and turn on full anisotropic filtering. Phones keep the lighter 4K set.
+  function sharpen() {
+    try {
+      const m = world.globeMaterial();
+      if (m && m.map) { m.map.anisotropy = world.renderer().capabilities.getMaxAnisotropy(); m.map.needsUpdate = true; }
+    } catch {}
+  }
+  function upgradeGlobe() {
+    world.onGlobeReady(sharpen);
+    let maxTex = 4096;
+    try { maxTex = world.renderer().capabilities.maxTextureSize || 4096; } catch {}
+    if (phone() || maxTex < 8192) return;
+    const hi = new Image();
+    hi.onload = () => { world.globeImageUrl('assets/earth-night-8k.jpg'); setTimeout(sharpen, 800); setTimeout(sharpen, 3000); };
+    hi.src = 'assets/earth-night-8k.jpg';
+    setTimeout(() => {
+      fetch('assets/countries-50m.json').then((r) => r.json()).then((topo) => {
+        if (!window.topojson) return;
+        world.polygonsData(topojson.feature(topo, topo.objects.countries).features.filter((f) => f.properties.name !== 'Antarctica'));
+      }).catch(() => {});
+    }, 2500);
   }
   function markerEl(c) {
     const wrap = document.createElement('div');
