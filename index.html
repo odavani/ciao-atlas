@@ -3,6 +3,12 @@
 <meta charset="utf-8">
 <title>Ciao Billboard Atlas</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Ciao Group's atlas of the world's most-watched billboards: pick a screen, see the full cost, send your plan.">
+<meta property="og:title" content="Ciao Billboard Atlas">
+<meta property="og:description" content="The world's most-watched screens, priced for your moment. Birthdays, anniversaries, launches.">
+<meta property="og:image" content="https://odavani.github.io/ciao-atlas/assets/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="assets/ciao-group-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,500;0,700;0,800;1,800&family=Noto+Sans:wght@400;500;600&display=swap">
@@ -81,6 +87,7 @@ body:not(.panel-open) #globe { transform: translateX(calc(var(--rail-w) / 2)); }
 .brand img { height: 24px; width: auto; display: block; }
 .brand span { font: 700 13px/1.1 var(--font-display); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-dim); white-space: nowrap; }
 .prefs { display: flex; gap: 8px; flex-wrap: wrap; }
+.prefs.filt { padding: 0 20px 10px; }
 .sel { position: relative; }
 .sel select { appearance: none; -webkit-appearance: none; background: var(--panel-2); border: 1px solid var(--line); border-radius: 999px;
   padding: 4px 26px 4px 11px; font-size: 12.5px; font-weight: 500; color: var(--ink); cursor: pointer; }
@@ -256,6 +263,30 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
 .book { border: 1px solid var(--teal); border-radius: var(--r); padding: 16px; background: rgba(67, 197, 173, .08); display: grid; gap: 8px; }
 .book h3 { margin: 0; font: 800 18px var(--display); }
 .book p { margin: 0; color: var(--ink-dim); font-size: 14px; }
+/* map tools, first-visit hint, city labels, filters */
+.tools { position: absolute; right: 16px; bottom: 16px; z-index: 2; display: grid; gap: 8px; }
+body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
+.tools button { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: rgba(13, 34, 56, .88); color: var(--ink);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); display: grid; place-items: center; transition: border-color .15s, color .15s; }
+.tools button:hover { border-color: var(--ink-mute); }
+.tools button[aria-pressed="true"] { color: var(--green); border-color: rgba(115, 212, 58, .55); }
+.hint { position: absolute; left: calc(50% + var(--rail-w) / 2); bottom: 22px; transform: translateX(-50%); z-index: 2; width: max-content; max-width: min(88vw, 460px); text-align: center;
+  background: rgba(13, 34, 56, .9); border: 1px solid var(--line); border-radius: 999px; padding: 9px 18px; font-size: 13.5px; color: var(--ink);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); pointer-events: none; animation: hintin .5s var(--ease); }
+@keyframes hintin { from { opacity: 0; transform: translate(-50%, 8px); } }
+.hint.out { opacity: 0; transition: opacity .5s; }
+.count { padding: 0 20px 8px; font-size: 12px; color: var(--ink-mute); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.count button { border: 0; background: none; color: var(--green); font-size: 12px; text-decoration: underline; padding: 0; }
+.empty button { margin-top: 10px; display: block; border: 1px solid var(--line); background: var(--panel-2); border-radius: 999px; padding: 6px 14px; color: var(--ink); }
+.cl { position: relative; width: 0; height: 0; pointer-events: none; }
+.cl i { position: absolute; left: -2px; top: -2px; width: 4px; height: 4px; border-radius: 50%; background: rgba(238, 244, 248, .75); box-shadow: 0 0 4px rgba(0, 0, 0, .8); }
+.cl span { position: absolute; left: 7px; top: -6px; white-space: nowrap; font: 600 11px/1 var(--font-body); letter-spacing: .02em; color: rgba(238, 244, 248, .86);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .95), 0 0 7px rgba(0, 0, 0, .85); }
+.cl[data-tier="0"] span { font-size: 12px; color: #fff; }
+.cl[data-tier="3"] span { font-size: 10.5px; color: rgba(238, 244, 248, .72); }
+.hero .lnk { position: absolute; top: 10px; right: 52px; width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .2);
+  background: rgba(7, 20, 35, .74); display: grid; place-items: center; }
+.toast button { margin-left: 12px; border: 0; background: none; color: #0b6b2b; font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; padding: 0; }
 .mobilebar { display: none; }
 .rail .railclose { display: none; }
 .loading { position: absolute; inset: 0; display: grid; place-items: center; color: var(--ink-dim); font-size: 14px; pointer-events: none; }
@@ -289,6 +320,10 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
   .mk .lbl { font-size: 11.5px; }
   .mk.astro button { width: 56px; height: 70px; }
   .mk.astro .lbl { top: 40px; }
+  .tools { top: calc(68px + env(safe-area-inset-top, 0px)); bottom: auto; right: 12px; }
+  body.panel-open .tools, body.rail-open .tools { display: none; }
+  .tools button { width: 38px; height: 38px; }
+  .hint { left: 50%; bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
   .slot-row { grid-template-columns: 54px minmax(0, 1fr) minmax(0, 1fr); }
   .field input, .field select, .field textarea { font-size: 16px; } /* stops iOS zoom on focus */
 }
@@ -316,6 +351,11 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
     </label>
     <div class="chips" id="chips" role="group"></div>
     <div class="kinds" id="kinds" role="group" hidden></div>
+    <div class="prefs filt">
+      <label class="sel"><span hidden data-t="budget"></span><select id="budSel"></select></label>
+      <label class="sel"><span hidden data-t="sort"></span><select id="sortSel"></select></label>
+    </div>
+    <div class="count" id="count" aria-live="polite"></div>
     <div class="list" id="list"></div>
   </aside>
 
@@ -332,6 +372,14 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
     </button>
   </div>
 
+  <div class="tools" id="tools" role="group">
+    <button type="button" id="tZin"></button>
+    <button type="button" id="tZout"></button>
+    <button type="button" id="tReset"></button>
+    <button type="button" id="tRot" aria-pressed="false"></button>
+    <button type="button" id="tDay" aria-pressed="true"></button>
+  </div>
+  <div class="hint" id="hint" hidden></div>
   <div class="peek" id="peek" hidden></div>
   <section class="panel" id="panel" hidden aria-live="polite"></section>
 </div>
@@ -349,6 +397,12 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
   const INQUIRY = { to: 'opourmomen@gmail.com', endpoint: 'https://formsubmit.co/ajax/opourmomen@gmail.com' };
 
   const ICON = {
+    minus: '<svg class="ico" viewBox="0 0 256 256" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128Z"/></svg>',
+    house: '<svg class="ico" viewBox="0 0 256 256" aria-hidden="true"><path d="M219.31,108.68l-80-80a16,16,0,0,0-22.62,0l-80,80A15.87,15.87,0,0,0,32,120v96a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V160h32v56a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V120A15.87,15.87,0,0,0,219.31,108.68ZM208,208H160V152a8,8,0,0,0-8-8H104a8,8,0,0,0-8,8v56H48V120l80-80,80,80Z"/></svg>',
+    play: '<svg class="ico" viewBox="0 0 256 256" aria-hidden="true"><path d="M232.4,114.49,88.32,26.35a16,16,0,0,0-16.2-.3A15.86,15.86,0,0,0,64,39.87V216.13A15.94,15.94,0,0,0,80,232a16.07,16.07,0,0,0,8.36-2.35L232.4,141.51a15.81,15.81,0,0,0,0-27ZM80,215.94V40l143.83,88Z"/></svg>',
+    pause: '<svg class="ico" viewBox="0 0 256 256" aria-hidden="true"><path d="M200,32H160a16,16,0,0,0-16,16V208a16,16,0,0,0,16,16h40a16,16,0,0,0,16-16V48A16,16,0,0,0,200,32Zm0,176H160V48h40ZM96,32H56A16,16,0,0,0,40,48V208a16,16,0,0,0,16,16H96a16,16,0,0,0,16-16V48A16,16,0,0,0,96,32Zm0,176H56V48H96Z"/></svg>',
+    sun: '<svg class="ico" viewBox="0 0 256 256" aria-hidden="true"><path d="M240,152H199.55a73.54,73.54,0,0,0,.45-8,72,72,0,0,0-144,0,73.54,73.54,0,0,0,.45,8H16a8,8,0,0,0,0,16H240a8,8,0,0,0,0-16ZM72,144a56,56,0,1,1,111.41,8H72.59A56.13,56.13,0,0,1,72,144Zm144,56a8,8,0,0,1-8,8H48a8,8,0,0,1,0-16H208A8,8,0,0,1,216,200ZM72.84,43.58a8,8,0,0,1,14.32-7.16l8,16a8,8,0,0,1-14.32,7.16Zm-56,48.84a8,8,0,0,1,10.74-3.57l16,8a8,8,0,0,1-7.16,14.31l-16-8A8,8,0,0,1,16.84,92.42Zm192,15.16a8,8,0,0,1,3.58-10.73l16-8a8,8,0,1,1,7.16,14.31l-16,8a8,8,0,0,1-10.74-3.58Zm-48-55.16,8-16a8,8,0,0,1,14.32,7.16l-8,16a8,8,0,1,1-14.32-7.16Z"/></svg>',
+    link: '<svg class="ico" viewBox="0 0 256 256" aria-hidden="true"><path d="M240,88.23a54.43,54.43,0,0,1-16,37L189.25,160a54.27,54.27,0,0,1-38.63,16h-.05A54.63,54.63,0,0,1,96,119.84a8,8,0,0,1,16,.45A38.62,38.62,0,0,0,150.58,160h0a38.39,38.39,0,0,0,27.31-11.31l34.75-34.75a38.63,38.63,0,0,0-54.63-54.63l-11,11A8,8,0,0,1,135.7,59l11-11A54.65,54.65,0,0,1,224,48,54.86,54.86,0,0,1,240,88.23ZM109,185.66l-11,11A38.41,38.41,0,0,1,70.6,208h0a38.63,38.63,0,0,1-27.29-65.94L78,107.31A38.63,38.63,0,0,1,144,135.71a8,8,0,0,0,16,.45A54.86,54.86,0,0,0,144,96a54.65,54.65,0,0,0-77.27,0L32,130.75A54.62,54.62,0,0,0,70.56,224h0a54.28,54.28,0,0,0,38.64-16l11-11A8,8,0,0,0,109,185.66Z"/></svg>',
     x: '<svg class="ico" viewBox="0 0 256 256" aria-hidden="true"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg>',
     plus: '<svg class="ico" viewBox="0 0 256 256" aria-hidden="true"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg>',
     check: '<svg class="ico" viewBox="0 0 256 256" aria-hidden="true"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"/></svg>',
@@ -560,7 +614,35 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
   "conceptLbl": "Concept",
   "whenLbl": "Needed by",
   "budgetLbl": "Budget",
-  "callLbl": "Preferred call times"
+  "callLbl": "Preferred call times",
+  "zoomIn": "Zoom in",
+  "zoomOut": "Zoom out",
+  "resetView": "Reset the view",
+  "rotatePause": "Pause the rotation",
+  "rotatePlay": "Rotate the globe",
+  "toggleDay": "Show day and night",
+  "toggleNight": "Show night only",
+  "hintDesktop": "Drag to turn the globe. Scroll to zoom. Click a pin.",
+  "hintTouch": "Drag to turn the globe. Pinch to zoom. Tap a pin.",
+  "budget": "Budget",
+  "bAny": "Any price",
+  "bUnder": "Under {p}",
+  "bMid": "{a} to {b}",
+  "bOver": "Over {p}",
+  "bReq": "Price on request",
+  "sort": "Sort",
+  "sRegion": "By region",
+  "sLow": "Price, low to high",
+  "sHigh": "Price, high to low",
+  "sName": "Name, A to Z",
+  "showing": "Showing {n} of {total} billboards",
+  "clearFilters": "Clear filters",
+  "copyLink": "Copy a link to this billboard",
+  "linkCopied": "Link copied",
+  "viewPlan": "View plan",
+  "newPlan": "Start a new plan",
+  "planCleared": "Plan cleared",
+  "searchHint": "Press Enter to fly to the first match"
  },
  "zh-CN": {
   "r.Space": "太空",
@@ -608,7 +690,35 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
   "conceptLbl": "创意",
   "whenLbl": "需要时间",
   "budgetLbl": "预算",
-  "callLbl": "方便的通话时间"
+  "callLbl": "方便的通话时间",
+  "zoomIn": "放大",
+  "zoomOut": "缩小",
+  "resetView": "重置视角",
+  "rotatePause": "暂停旋转",
+  "rotatePlay": "旋转地球",
+  "toggleDay": "显示昼夜",
+  "toggleNight": "仅显示夜景",
+  "hintDesktop": "拖动旋转地球，滚轮缩放，点击标记查看大屏。",
+  "hintTouch": "拖动旋转地球，双指缩放，点按标记查看大屏。",
+  "budget": "预算",
+  "bAny": "不限价格",
+  "bUnder": "{p}以下",
+  "bMid": "{a} 至 {b}",
+  "bOver": "{p}以上",
+  "bReq": "价格面议",
+  "sort": "排序",
+  "sRegion": "按地区",
+  "sLow": "价格从低到高",
+  "sHigh": "价格从高到低",
+  "sName": "名称 A 到 Z",
+  "showing": "显示 {total} 块大屏中的 {n} 块",
+  "clearFilters": "清除筛选",
+  "copyLink": "复制这块大屏的链接",
+  "linkCopied": "链接已复制",
+  "viewPlan": "查看方案",
+  "newPlan": "新建方案",
+  "planCleared": "方案已清空",
+  "searchHint": "按回车键飞往第一个匹配结果"
  },
  "zh-TW": {
   "r.Space": "太空",
@@ -656,7 +766,35 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
   "conceptLbl": "創意",
   "whenLbl": "需要時間",
   "budgetLbl": "預算",
-  "callLbl": "方便的通話時間"
+  "callLbl": "方便的通話時間",
+  "zoomIn": "放大",
+  "zoomOut": "縮小",
+  "resetView": "重設視角",
+  "rotatePause": "暫停旋轉",
+  "rotatePlay": "旋轉地球",
+  "toggleDay": "顯示晝夜",
+  "toggleNight": "僅顯示夜景",
+  "hintDesktop": "拖曳旋轉地球，滾輪縮放，點擊標記查看大屏。",
+  "hintTouch": "拖曳旋轉地球，雙指縮放，點按標記查看大屏。",
+  "budget": "預算",
+  "bAny": "不限價格",
+  "bUnder": "{p}以下",
+  "bMid": "{a} 至 {b}",
+  "bOver": "{p}以上",
+  "bReq": "價格洽詢",
+  "sort": "排序",
+  "sRegion": "依地區",
+  "sLow": "價格由低到高",
+  "sHigh": "價格由高到低",
+  "sName": "名稱 A 到 Z",
+  "showing": "顯示 {total} 塊大屏中的 {n} 塊",
+  "clearFilters": "清除篩選",
+  "copyLink": "複製這塊大屏的連結",
+  "linkCopied": "連結已複製",
+  "viewPlan": "查看方案",
+  "newPlan": "建立新方案",
+  "planCleared": "方案已清空",
+  "searchHint": "按 Enter 鍵飛往第一個符合的結果"
  },
  "ko": {
   "r.Space": "우주",
@@ -704,7 +842,35 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
   "conceptLbl": "콘셉트",
   "whenLbl": "필요 시점",
   "budgetLbl": "예산",
-  "callLbl": "희망 통화 시간"
+  "callLbl": "희망 통화 시간",
+  "zoomIn": "확대",
+  "zoomOut": "축소",
+  "resetView": "보기 초기화",
+  "rotatePause": "회전 일시정지",
+  "rotatePlay": "지구본 회전",
+  "toggleDay": "낮과 밤 보기",
+  "toggleNight": "밤만 보기",
+  "hintDesktop": "드래그해서 지구본을 돌리고, 스크롤로 확대하고, 핀을 클릭해 보세요.",
+  "hintTouch": "드래그해서 지구본을 돌리고, 핀치로 확대하고, 핀을 탭해 보세요.",
+  "budget": "예산",
+  "bAny": "모든 가격",
+  "bUnder": "{p} 미만",
+  "bMid": "{a} ~ {b}",
+  "bOver": "{p} 이상",
+  "bReq": "가격 문의",
+  "sort": "정렬",
+  "sRegion": "지역순",
+  "sLow": "가격 낮은 순",
+  "sHigh": "가격 높은 순",
+  "sName": "이름순 (A~Z)",
+  "showing": "빌보드 {total}개 중 {n}개 표시",
+  "clearFilters": "필터 초기화",
+  "copyLink": "이 빌보드 링크 복사",
+  "linkCopied": "링크를 복사했습니다",
+  "viewPlan": "플랜 보기",
+  "newPlan": "새 플랜 시작",
+  "planCleared": "플랜을 비웠습니다",
+  "searchHint": "Enter를 누르면 첫 번째 결과로 이동합니다"
  },
  "ja": {
   "r.Space": "宇宙",
@@ -752,7 +918,35 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
   "conceptLbl": "コンセプト",
   "whenLbl": "希望時期",
   "budgetLbl": "予算",
-  "callLbl": "希望の通話日時"
+  "callLbl": "希望の通話日時",
+  "zoomIn": "拡大",
+  "zoomOut": "縮小",
+  "resetView": "表示をリセット",
+  "rotatePause": "回転を一時停止",
+  "rotatePlay": "地球を回転",
+  "toggleDay": "昼と夜を表示",
+  "toggleNight": "夜のみ表示",
+  "hintDesktop": "ドラッグで地球を回転、スクロールでズーム、ピンをクリックしてみましょう。",
+  "hintTouch": "ドラッグで地球を回転、ピンチでズーム、ピンをタップしてみましょう。",
+  "budget": "予算",
+  "bAny": "すべての価格",
+  "bUnder": "{p}未満",
+  "bMid": "{a}〜{b}",
+  "bOver": "{p}以上",
+  "bReq": "料金はお問い合わせください",
+  "sort": "並べ替え",
+  "sRegion": "地域順",
+  "sLow": "価格の安い順",
+  "sHigh": "価格の高い順",
+  "sName": "名前順（A〜Z）",
+  "showing": "ビルボード{total}件中{n}件を表示",
+  "clearFilters": "絞り込みをクリア",
+  "copyLink": "このビルボードのリンクをコピー",
+  "linkCopied": "リンクをコピーしました",
+  "viewPlan": "プランを見る",
+  "newPlan": "新しいプランを作成",
+  "planCleared": "プランを空にしました",
+  "searchHint": "Enterキーで最初の一致先へ移動します"
  }
 };
   for (const l in NEW_UI) Object.assign(STR[l], NEW_UI[l]);
@@ -763,6 +957,9 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
   const CJK_FONT = { 'zh-CN': 'Noto+Sans+SC', 'zh-TW': 'Noto+Sans+TC', ko: 'Noto+Sans+KR', ja: 'Noto+Sans+JP' };
   const LANG_CUR = { 'zh-CN': 'CNY', 'zh-TW': 'USD', ko: 'KRW', ja: 'JPY', en: 'USD' };
   const CURS = ['USD', 'CNY', 'HKD', 'TWD', 'KRW', 'JPY', 'SGD', 'EUR', 'GBP', 'AED', 'AUD', 'LOCAL'];
+  const BUDGET_LOW = 2000, BUDGET_HIGH = 10000;     // USD thresholds for the budget filter
+  const REGION_VIEW = { USA: [39, -98, 1.9], Europe: [50, 12, 1.4], 'Middle East': [26, 47, 1.6], Asia: [20, 112, 2.3], China: [34, 104, 1.7], Australia: [-26, 134, 1.9], Space: [40, -20, 2.2] };
+  const CITY_TIERS = [1.8, 1.1, 0.66, 0.42];          // globe altitude below which city tier 0..3 appears
   const REGIONS = ['USA', 'Europe', 'Middle East', 'Asia', 'China', 'Australia', 'Space'];
   const KINDS = ['screen', 'truck', 'aerial', 'space'];
   const PKGS = ['moment', 'day', 'week'];
@@ -781,11 +978,14 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
     if (n.startsWith('ja')) return 'ja';
     return 'en';
   }
-  const S = { boards: [], byId: {}, clusters: [], fx: { USD: 1 }, i18n: {}, region: 'All', kind: 'All', q: '', sel: null, cluster: null,
+  const S = { boards: [], byId: {}, clusters: [], fx: { USD: 1 }, i18n: {}, region: 'All', kind: 'All', q: '', budget: 'any', sort: 'region', cities: [], cityTier: -2, sel: null, cluster: null,
     pkg: 'moment', opt: null, gal: {}, sp: { tab: 'concept', call: false, done: null, f: {}, slots: [{}, {}, {}], tz: (() => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch { return ''; } })() }, view: null, form: {}, plan: store.get('ciao-plan', []) };
   S.lang = store.get('ciao-lang', null) || guessLang();
   if (!STR[S.lang]) S.lang = 'en';
   S.cur = store.get('ciao-cur', null) || LANG_CUR[S.lang] || 'USD';
+  S.dn = store.get('ciao-dn', true) !== false;                // day and night (true) or night only
+  S.contact = store.get('ciao-contact', {}) || {};            // remembered so a returning visitor doesn't retype it
+  S.sp.f = { name: S.contact.name || '', email: S.contact.email || '', contact: S.contact.contact || '' };
 
   // ---------- i18n helpers ----------
   function t(key, vars) {
@@ -810,6 +1010,8 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
     $('#curSel').innerHTML = CURS.map((c) => `<option value="${c}" ${c === S.cur ? 'selected' : ''}>${c === 'LOCAL' ? esc(t('local')) : c}</option>`).join('');
     const fam = CJK_FONT[S.lang];
     $('#cjkFont').href = fam ? `https://fonts.googleapis.com/css2?family=${fam}:wght@400;500;700&display=swap` : 'data:text/css,';
+    $('#q').title = t('searchHint');
+    toolLabels(); renderPrefs();
     const l = $('#loading'); if (l) l.textContent = t('loading');
   }
 
@@ -888,6 +1090,14 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
   function matches(b) {
     if (S.region !== 'All' && b.region !== S.region) return false;
     if (S.kind !== 'All' && (b.kind || 'screen') !== S.kind) return false;
+    if (S.budget !== 'any') {
+      const fp = fromPrice(b);   // always USD
+      if (S.budget === 'req') { if (fp != null) return false; }
+      else if (fp == null) return false;
+      else if (S.budget === 'under' && !(fp < BUDGET_LOW)) return false;
+      else if (S.budget === 'mid' && !(fp >= BUDGET_LOW && fp <= BUDGET_HIGH)) return false;
+      else if (S.budget === 'over' && !(fp > BUDGET_HIGH)) return false;
+    }
     if (!S.q) return true;
     const hay = [b.name, tb(b, 'name'), b.city, city(b), b.country, country(b), b.region, t('r.' + b.region), t('k.' + (b.kind || 'screen'))].join(' ').toLowerCase();
     return S.q.split(/\s+/).every((w) => hay.includes(w));
@@ -902,7 +1112,7 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
       .bumpImageUrl('assets/earth-topology.png')
       .backgroundColor('rgba(0,0,0,0)')
       .showAtmosphere(true).atmosphereColor('#5aa7e1').atmosphereAltitude(0.16)
-      .htmlElementsData(S.clusters).htmlLat('lat').htmlLng('lng').htmlAltitude((c) => (isSpace(c.boards[0]) ? 0.6 : 0.008)).htmlTransitionDuration(0).htmlElement(markerEl)
+      .htmlElementsData(S.clusters).htmlLat('lat').htmlLng('lng').htmlAltitude((c) => (c.city ? 0.004 : isSpace(c.boards[0]) ? 0.6 : 0.008)).htmlTransitionDuration(0).htmlElement(markerEl)
       .ringsData([]).ringLat('lat').ringLng('lng').ringColor(() => (x) => `rgba(115,212,58,${1 - x})`)
       .ringMaxRadius(3.2).ringPropagationSpeed(2.4).ringRepeatPeriod(1100)
       .width(el.clientWidth).height(el.clientHeight);
@@ -926,11 +1136,14 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
         .pathDashAnimateTime(reduceMotion ? 0 : 160000).pathTransitionDuration(0);
     }
     upgradeGlobe();
+    initDayNight();
+    loadCities();
     const c = world.controls();
     c.autoRotate = !reduceMotion; c.autoRotateSpeed = 0.35; c.enableDamping = true; c.minDistance = 130; c.maxDistance = 520;
     world.pointOfView({ lat: 28, lng: phone() ? -4 : 20, altitude: phone() ? 3.1 : 2.3 }, 0);  // phones start further west so the astronaut is in view
-    el.addEventListener('pointerdown', () => { c.autoRotate = false; });
-    if (typeof world.onZoom === 'function') world.onZoom((pov) => document.body.classList.toggle('zoomed', pov.altitude < 1.35));
+    el.addEventListener('pointerdown', () => { setRotate(false); hideHint(); });
+    setRotate(c.autoRotate);
+    if (typeof world.onZoom === 'function') world.onZoom((pov) => { document.body.classList.toggle('zoomed', pov.altitude < 1.35); syncCities(pov.altitude); });
     fetch('assets/countries-110m.json').then((r) => r.json()).then((topo) => {
       if (!window.topojson) return;
       const feats = topojson.feature(topo, topo.objects.countries).features.filter((f) => f.properties.name !== 'Antarctica');
@@ -965,7 +1178,117 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
       }).catch(() => {});
     }, 2500);
   }
+  // ----- day and night: the sunlit side shows NASA Blue Marble, the night side the city-lights map, blended at the real terminator -----
+  const DN = { U: null };
+  function sunPosition(date = new Date()) {
+    const rad = Math.PI / 180, n = (date - Date.UTC(date.getUTCFullYear(), 0, 0)) / 864e5;
+    const decl = -23.44 * Math.cos(rad * (360 / 365) * (n + 10));
+    const B = rad * (360 / 364) * (n - 81), eot = 9.87 * Math.sin(2 * B) - 7.53 * Math.cos(B) - 1.5 * Math.sin(B);     // equation of time, minutes
+    const h = date.getUTCHours() + date.getUTCMinutes() / 60 + date.getUTCSeconds() / 3600;
+    const lng = -15 * (h - 12 + eot / 60), lat = decl;
+    // same lat/lng to unit vector mapping as the globe's sphere geometry (u = (lng + 180) / 360)
+    return { lat, lng, vec: [Math.cos(lng * rad) * Math.cos(lat * rad), Math.sin(lat * rad), -Math.sin(lng * rad) * Math.cos(lat * rad)] };
+  }
+  function initDayNight() {
+    let mat, tries = 0;
+    try { mat = world.globeMaterial(); } catch { return; }
+    const wait = setInterval(() => {
+      if (++tries > 60) return clearInterval(wait);
+      if (!(mat.map && mat.map.image)) return;
+      clearInterval(wait);
+      let maxTex = 4096; try { maxTex = world.renderer().capabilities.maxTextureSize || 4096; } catch {}
+      const img = new Image();
+      img.onload = () => {
+        const tex = new mat.map.constructor(img);
+        tex.colorSpace = mat.map.colorSpace; tex.anisotropy = mat.map.anisotropy; tex.needsUpdate = true;
+        const U = { dayMap: { value: tex }, sunDir: { value: sunPosition().vec }, dnMix: { value: S.dn ? 1 : 0 } };
+        DN.U = U;
+        mat.onBeforeCompile = (shader) => {
+          Object.assign(shader.uniforms, U);
+          shader.vertexShader = shader.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vObjPos;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvObjPos = position;');
+          shader.fragmentShader = shader.fragmentShader.replace('#include <common>', '#include <common>\nuniform sampler2D dayMap; uniform vec3 sunDir; uniform float dnMix; varying vec3 vObjPos;')
+            .replace('#include <map_fragment>', `#ifdef USE_MAP
+  vec4 nightC = texture2D( map, vMapUv );
+  vec4 dayC = texture2D( dayMap, vMapUv );
+  float sunD = dot( normalize( vObjPos ), normalize( sunDir ) );
+  float dayT = dnMix * smoothstep( -0.10, 0.22, sunD );
+  diffuseColor *= mix( nightC, dayC * 1.12, dayT );
+#endif`);
+        };
+        mat.customProgramCacheKey = () => 'ciao-day-night';
+        mat.needsUpdate = true;
+        setInterval(() => { U.sunDir.value = sunPosition().vec; }, 60000);
+      };
+      img.src = !phone() && maxTex >= 8192 ? 'assets/earth-day-8k.jpg' : 'assets/earth-day.jpg';
+    }, 250);
+  }
+  function setDayNight(on) {
+    S.dn = on; store.set('ciao-dn', on);
+    if (DN.U) DN.U.dnMix.value = on ? 1 : 0;
+    const b = $('#tDay'); b.setAttribute('aria-pressed', on); b.setAttribute('aria-label', t(on ? 'toggleNight' : 'toggleDay')); b.title = b.getAttribute('aria-label');
+  }
+
+  // ----- city labels that appear as you zoom in -----
+  async function loadCities() {
+    try {
+      const raw = await (await fetch('assets/cities.json')).json();
+      const near = (c, k) => Math.abs(k.lat - c.lat) < 0.7 && Math.abs(k.lng - c.lng) < 0.9;       // billboard pins already carry their own city label
+      S.cities = raw.map(([name, lat, lng, tier, zh, zht, ko, ja]) => ({ city: true, name, lat, lng, tier, loc: { 'zh-CN': zh, 'zh-TW': zht, ko, ja } }))
+        .filter((c) => !S.clusters.some((k) => near(c, k)));
+      S.cityTier = -2;
+      syncCities(world.pointOfView().altitude);
+    } catch {}
+  }
+  function syncCities(alt) {
+    if (!S.cities.length) return;
+    let tier = -1; CITY_TIERS.forEach((th, i) => { if (alt < th) tier = i; });
+    if (tier === S.cityTier) return;
+    S.cityTier = tier;
+    world.htmlElementsData([...S.clusters, ...S.cities.filter((c) => c.tier <= tier)]);
+    refreshMarkers();
+  }
+  const cityLabel = (node) => { node.querySelector('span').textContent = node.__c.loc[S.lang] || node.__c.name; };
+  function cityEl(c) {
+    const w = document.createElement('div'); w.className = 'cl'; w.dataset.tier = c.tier; w.__c = c; w.innerHTML = '<i></i><span></span>'; cityLabel(w); return w;
+  }
+
+  // ----- map tools -----
+  const homeView = () => ({ lat: 28, lng: phone() ? -4 : 20, altitude: phone() ? 3.1 : 2.3 });
+  function setRotate(on) {
+    try { world.controls().autoRotate = !!on; } catch {}
+    const b = $('#tRot'); if (!b) return;
+    b.innerHTML = on ? ICON.pause : ICON.play; b.setAttribute('aria-pressed', !!on);
+    b.setAttribute('aria-label', t(on ? 'rotatePause' : 'rotatePlay')); b.title = b.getAttribute('aria-label');
+  }
+  function zoomBy(f) { const a = world.pointOfView().altitude; world.pointOfView({ altitude: Math.min(4.2, Math.max(0.3, a * f)) }, reduceMotion ? 0 : 350); setRotate(false); }
+  function flyRegion(r) {
+    if (!world) return;
+    setRotate(false);
+    if (r === 'All') return world.pointOfView(homeView(), reduceMotion ? 0 : 1000);
+    const v = REGION_VIEW[r]; if (!v) return;
+    world.pointOfView({ lat: v[0], lng: v[1], altitude: phone() ? v[2] * 1.25 : v[2] }, reduceMotion ? 0 : 1100);
+  }
+  function toolLabels() {
+    [['tZin', 'minus', 'zoomIn', 'plus'], ['tZout', 'minus', 'zoomOut', 'minus'], ['tReset', 'house', 'resetView', 'house']].forEach(([id, , key, icon]) => {
+      const b = $('#' + id); b.innerHTML = ICON[icon]; b.setAttribute('aria-label', t(key)); b.title = t(key);
+    });
+    const d = $('#tDay'); d.innerHTML = ICON.sun; setDayNight(S.dn);
+    const r = $('#tRot'); if (r) { const on = r.getAttribute('aria-pressed') === 'true'; r.innerHTML = on ? ICON.pause : ICON.play; r.setAttribute('aria-label', t(on ? 'rotatePause' : 'rotatePlay')); r.title = r.getAttribute('aria-label'); }
+  }
+  // ----- first-visit hint -----
+  let hintTimer;
+  function showHint() {
+    if (store.get('ciao-hint', false) || location.hash.length > 1) return;
+    const h = $('#hint'); h.textContent = t(matchMedia('(pointer: coarse)').matches ? 'hintTouch' : 'hintDesktop'); h.hidden = false;
+    hintTimer = setTimeout(hideHint, 9000);
+  }
+  function hideHint() {
+    clearTimeout(hintTimer);
+    const h = $('#hint'); if (!h || h.hidden) return;
+    store.set('ciao-hint', true); h.classList.add('out'); setTimeout(() => { h.hidden = true; }, 500);
+  }
   function markerEl(c) {
+    if (c.city) return cityEl(c);
     const wrap = document.createElement('div');
     const n = c.boards.length;
     const space = isSpace(c.boards[0]);
@@ -1037,22 +1360,40 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
       `<button class="chip" type="button" data-k="${k}" aria-pressed="${S.kind === k}">${esc(k === 'All' ? t('allFormats') : t('k.' + k))}${k === 'All' ? '' : `<em>${kc[k]}</em>`}</button>`).join('');
   }
   const kindTag = (b) => (b.kind && b.kind !== 'screen' ? `<i class="kind">${esc(t('tag.' + b.kind))}</i>` : '');
+  function rowHtml(b) {
+    const fp = fromPrice(b);
+    return `<button class="row${S.sel && S.sel.id === b.id ? ' active' : ''}" type="button" data-id="${esc(b.id)}">
+      ${b.img ? `<img src="${esc(b.img)}" alt="" loading="lazy">` : '<span class="noimg"></span>'}
+      <span class="t"><b>${esc(tb(b, 'name'))}</b><span>${esc(city(b))}, ${esc(country(b))}${kindTag(b)}</span></span>
+      <span class="p">${fp != null ? `<small>${esc(t('fromLbl'))}</small>${money(fp, curFor(b))}` : isEnq(b) ? `<small>${esc(t('onRequest'))}</small>` : ''}</span></button>`;
+  }
+  const filtersActive = () => S.region !== 'All' || S.kind !== 'All' || !!S.q || S.budget !== 'any';
+  function clearFilters() { S.region = 'All'; S.kind = 'All'; S.q = ''; S.budget = 'any'; $('#q').value = ''; renderPrefs(); rerender(); }
   function renderList() {
     const vis = S.boards.filter(matches);
-    if (!vis.length) { $('#list').innerHTML = `<p class="empty">${esc(t('noMatch'))}</p>`; return; }
+    $('#count').innerHTML = `<span>${esc(t('showing', { n: vis.length, total: S.boards.length }))}</span>${filtersActive() ? `<button type="button" data-act="clear">${esc(t('clearFilters'))}</button>` : ''}`;
+    if (!vis.length) { $('#list').innerHTML = `<p class="empty">${esc(t('noMatch'))}<button type="button" data-act="clear">${esc(t('clearFilters'))}</button></p>`; return; }
     let html = '';
-    for (const r of REGIONS) {
-      const rows = vis.filter((b) => b.region === r);
-      if (!rows.length) continue;
-      html += `<h2>${esc(t('r.' + r))}</h2>` + rows.map((b) => {
-        const fp = fromPrice(b);
-        return `<button class="row${S.sel && S.sel.id === b.id ? ' active' : ''}" type="button" data-id="${esc(b.id)}">
-          ${b.img ? `<img src="${esc(b.img)}" alt="" loading="lazy">` : '<span class="noimg"></span>'}
-          <span class="t"><b>${esc(tb(b, 'name'))}</b><span>${esc(city(b))}, ${esc(country(b))}${kindTag(b)}</span></span>
-          <span class="p">${fp != null ? `<small>${esc(t('fromLbl'))}</small>${money(fp, curFor(b))}` : isEnq(b) ? `<small>${esc(t('onRequest'))}</small>` : ''}</span></button>`;
-      }).join('');
+    if (S.sort === 'region') {
+      for (const r of REGIONS) {
+        const rows = vis.filter((b) => b.region === r);
+        if (rows.length) html += `<h2>${esc(t('r.' + r))}</h2>` + rows.map(rowHtml).join('');
+      }
+    } else {
+      const price = (b) => { const v = fromPrice(b); return v == null ? (S.sort === 'low' ? Infinity : -Infinity) : v; };
+      const sorted = [...vis].sort(S.sort === 'low' ? (a, b) => price(a) - price(b) : S.sort === 'high' ? (a, b) => price(b) - price(a)
+        : (a, b) => tb(a, 'name').localeCompare(tb(b, 'name'), locale()));
+      html = '<div style="height:8px"></div>' + sorted.map(rowHtml).join('');
     }
     $('#list').innerHTML = html;
+  }
+  function renderPrefs() {
+    const cur = curFor(null), m = (n) => money(n, cur);
+    const bud = [['any', t('bAny')], ['under', t('bUnder', { p: m(BUDGET_LOW) })], ['mid', t('bMid', { a: m(BUDGET_LOW), b: m(BUDGET_HIGH) })], ['over', t('bOver', { p: m(BUDGET_HIGH) })], ['req', t('bReq')]];
+    $('#budSel').innerHTML = bud.map(([k, l]) => `<option value="${k}" ${S.budget === k ? 'selected' : ''}>${esc(l)}</option>`).join('');
+    const srt = [['region', t('sRegion')], ['low', t('sLow')], ['high', t('sHigh')], ['name', t('sName')]];
+    $('#sortSel').innerHTML = srt.map(([k, l]) => `<option value="${k}" ${S.sort === k ? 'selected' : ''}>${esc(l)}</option>`).join('');
+    $('#budSel').setAttribute('aria-label', t('budget')); $('#sortSel').setAttribute('aria-label', t('sort'));
   }
 
   // ---------- billboard panel ----------
@@ -1186,6 +1527,7 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
     const ps = planState(b);
     P.innerHTML = `<div class="scroll">
       <div class="hero">${heroSrc ? `<img src="${esc(heroSrc)}" alt="${esc(tb(b, 'name'))}">` : '<div class="noimg"></div>'}
+        <button class="lnk" type="button" data-act="link" aria-label="${esc(t('copyLink'))}" title="${esc(t('copyLink'))}">${ICON.link}</button>
         <button class="x" type="button" data-act="close" aria-label="${esc(t('close'))}">${ICON.x}</button></div>
       ${gal.length > 1 ? `<div class="gal" role="group" aria-label="${esc(tb(b, 'name'))}">${gal.map((g, i) => `<button type="button" data-gal="${i}" aria-current="${i === gi}" aria-label="${esc(tb(b, 'name'))} ${i + 1}"><img src="${esc(g)}" alt=""></button>`).join('')}</div>` : ''}
       ${credit}${sibs}
@@ -1224,7 +1566,8 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
     if (ps.i >= 0 && ps.same) { S.plan.splice(ps.i, 1); msg = t('removed'); }
     else if (ps.i >= 0) { S.plan[ps.i] = item; msg = t('updated'); }
     else { S.plan.push(item); msg = t('added'); }
-    savePlan(); renderPanel(); toast(msg);
+    const added = msg === t('added') || msg === t('updated');
+    savePlan(); renderPanel(); toast(msg, added ? { label: t('viewPlan'), fn: openPlan } : undefined);
   }
   function openPlan() {
     S.sel = null; S.cluster = null; S.view = 'plan'; if (world) world.ringsData([]); refreshMarkers();
@@ -1262,7 +1605,7 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
   function renderForm(err) {
     $('#panel').dataset.board = '';
     S.view = 'form';
-    const f = S.form;
+    const f = Object.assign({}, S.contact, S.form);
     const occ = ['birthday', 'anniversary', 'launch', 'other'];
     $('#panel').innerHTML = `<div class="scroll"><div class="body">
         <div class="head"><h2>${esc(t('formTitle'))}</h2><button class="iconbtn" type="button" data-act="close" aria-label="${esc(t('close'))}">${ICON.x}</button></div>
@@ -1312,6 +1655,7 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
     if (!S.form.name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(S.form.email || '')) return renderForm(t('formErr'));
     const btn = $('#inqSend'); btn.disabled = true; btn.textContent = t('sending');
     const subject = t('subject', { name: S.form.name });
+    S.contact = { name: S.form.name, email: S.form.email, contact: S.form.contact || '' }; store.set('ciao-contact', S.contact);
     const ok = await postInquiry(subject, S.form.email, { name: S.form.name, email: S.form.email, contact: S.form.contact || '',
       occasion: t('o.' + S.form.occasion), plan: planSummary(), message: S.form.message || '' });
     if (ok) return renderSent();
@@ -1336,6 +1680,7 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
     else if (wantsCall && !slots.length) err = t('spaceErrSlot');
     if (err) { sp.err = err; renderPanel(); return; }
     sp.err = '';
+    S.contact = { name: f.name, email: f.email, contact: f.contact || '' }; store.set('ciao-contact', S.contact);
     const btn = $('#spSend'); if (btn) { btn.disabled = true; btn.textContent = t('sending'); }
     const subject = t(callMode ? 'subjectCall' : 'subjectSpace', { name: f.name });
     const ok = await postInquiry(subject, f.email, { name: f.name, email: f.email, contact: f.contact || '', concept: f.what || '', occasion: f.occasion ? t('o.' + f.occasion) : '',
@@ -1349,7 +1694,8 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
     S.view = 'sent';
     $('#panel').innerHTML = `<div class="scroll"><div class="body">
       <div class="head"><span></span><button class="iconbtn" type="button" data-act="close" aria-label="${esc(t('close'))}">${ICON.x}</button></div>
-      <div class="done"><span class="tick">${ICON.check}</span><h2>${esc(t('sentTitle'))}</h2><p class="note">${esc(t('sentText'))}</p></div></div></div>`;
+      <div class="done"><span class="tick">${ICON.check}</span><h2>${esc(t('sentTitle'))}</h2><p class="note">${esc(t('sentText'))}</p>
+        <button class="cta ghost" type="button" data-act="newplan">${esc(t('newPlan'))}</button></div></div></div>`;
   }
   function renderFallback(subject, body) {
     $('#panel').dataset.board = '';
@@ -1372,25 +1718,40 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
     }
   }
   let tt;
-  function toast(msg) {
+  function toast(msg, act) {
     document.querySelectorAll('.toast').forEach((x) => x.remove());
-    const n = document.createElement('div'); n.className = 'toast'; n.setAttribute('role', 'status'); n.textContent = msg;
-    document.body.appendChild(n); clearTimeout(tt); tt = setTimeout(() => n.remove(), 1800);
+    const n = document.createElement('div'); n.className = 'toast'; n.setAttribute('role', 'status'); n.append(msg);
+    if (act) { const b = document.createElement('button'); b.type = 'button'; b.textContent = act.label; b.onclick = () => { n.remove(); act.fn(); }; n.append(b); }
+    document.body.appendChild(n); clearTimeout(tt); tt = setTimeout(() => n.remove(), act ? 4500 : 1800);
   }
 
   // ---------- events ----------
   function rerender() {
     renderChips(); renderList(); refreshMarkers();
+    document.querySelectorAll('.cl').forEach(cityLabel);
     if ($('#panel').hidden) return;
     if (S.view === 'board' && S.sel) renderPanel();
     else if (S.view === 'plan') renderPlan();
     else if (S.view === 'form') renderForm();
   }
   function bind() {
-    $('#chips').addEventListener('click', (e) => { const b = e.target.closest('.chip'); if (b) { S.region = b.dataset.r; rerender(); } });
+    $('#chips').addEventListener('click', (e) => { const b = e.target.closest('.chip'); if (b) { S.region = b.dataset.r; rerender(); flyRegion(b.dataset.r); } });
+    $('#budSel').addEventListener('change', (e) => { S.budget = e.target.value; rerender(); });
+    $('#sortSel').addEventListener('change', (e) => { S.sort = e.target.value; renderList(); });
+    document.addEventListener('click', (e) => { if (e.target.closest('[data-act="clear"]')) clearFilters(); });
+    $('#tZin').addEventListener('click', () => zoomBy(0.62));
+    $('#tZout').addEventListener('click', () => zoomBy(1 / 0.62));
+    $('#tReset').addEventListener('click', () => { setRotate(!reduceMotion); world.pointOfView(homeView(), reduceMotion ? 0 : 1000); });
+    $('#tRot').addEventListener('click', () => setRotate(!world.controls().autoRotate));
+    $('#tDay').addEventListener('click', () => setDayNight(!S.dn));
+    $('#q').addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter') return;
+      const c = S.clusters.find((k) => k.boards.some(matches)); if (!c || !world) return;
+      document.body.classList.remove('rail-open'); flyTo(c); if (!c.boards.some(isSpace)) openCluster(c);
+    });
     $('#kinds').addEventListener('click', (e) => { const b = e.target.closest('.chip'); if (b) { S.kind = b.dataset.k; rerender(); } });
     $('#langSel').addEventListener('change', (e) => { S.lang = e.target.value; store.set('ciao-lang', S.lang); applyStatic(); rerender(); });
-    $('#curSel').addEventListener('change', (e) => { S.cur = e.target.value; store.set('ciao-cur', S.cur); rerender(); });
+    $('#curSel').addEventListener('change', (e) => { S.cur = e.target.value; store.set('ciao-cur', S.cur); renderPrefs(); rerender(); });
     $('#q').addEventListener('input', (e) => { S.q = e.target.value.trim().toLowerCase(); renderList(); refreshMarkers(); });
     $('#list').addEventListener('click', (e) => {
       const r = e.target.closest('.row'); if (!r) return;
@@ -1401,6 +1762,11 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
       const el = e.target.closest('button'); if (!el) return;
       const act = el.dataset.act;
       if (act === 'close') return closePanel();
+      if (act === 'link' && S.sel) {
+        const url = location.href.split('#')[0] + '#' + S.sel.id;
+        return (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(() => toast(t('linkCopied'))).catch(() => toast(url));
+      }
+      if (act === 'newplan') { S.plan = []; savePlan(); closePanel(); return toast(t('planCleared')); }
       if (act === 'plan') return togglePlan();
       if (act === 'inquire') return renderForm();
       if (act === 'toplan') { S.view = 'plan'; return renderPlan(); }
@@ -1447,8 +1813,10 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
     S.clusters = cluster(S.boards);
     savePlan(); renderChips(); renderList(); bind();
     if (typeof Globe !== 'function') { $('#loading').textContent = t('loadFail'); return; }
+    renderPrefs();
     initGlobe();
     $('#loading').remove();
+    showHint();
     refreshMarkers();
     const hash = location.hash.slice(1);
     if (hash === 'plan') setTimeout(openPlan, 400);
