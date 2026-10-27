@@ -247,6 +247,9 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
 .gal button { flex: none; width: 68px; height: 46px; padding: 0; border: 2px solid transparent; border-radius: 6px; overflow: hidden; background: var(--panel-2); opacity: .65; transition: opacity .15s; }
 .gal button[aria-current="true"] { border-color: var(--green); opacity: 1; }
 .gal img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.guide h3 { margin: 0 0 10px; font: 700 12.5px/1.35 var(--font-display); letter-spacing: .08em; text-transform: uppercase; color: var(--teal); }
+.guide .facts.one { gap: 12px; }
+.guide .facts.one dd { color: var(--ink); }
 .facts.one { grid-template-columns: minmax(0, 1fr); gap: 10px; }
 .facts.one dd { font-size: 13.5px; color: var(--ink-dim); }
 .onreq { font-style: normal; font-size: 12.5px; color: var(--gold); }
@@ -284,9 +287,50 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
   text-shadow: 0 1px 3px rgba(0, 0, 0, .95), 0 0 7px rgba(0, 0, 0, .85); }
 .cl[data-tier="0"] span { font-size: 12px; color: #fff; }
 .cl[data-tier="3"] span { font-size: 10.5px; color: rgba(238, 244, 248, .72); }
+.hero .gnav { position: absolute; top: 50%; width: 34px; height: 34px; margin-top: -17px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .2);
+  background: rgba(7, 20, 35, .74); display: grid; place-items: center; padding: 0; opacity: .9; }
+.hero .gnav.prev { left: 10px; } .hero .gnav.prev .ico { transform: scaleX(-1); } .hero .gnav.next { right: 10px; }
+.hero .gnav:hover { background: rgba(7, 20, 35, .92); opacity: 1; }
+.hero .gcount { position: absolute; left: 10px; bottom: 10px; padding: 2px 9px; border-radius: 999px; background: rgba(7, 20, 35, .74); font-size: 12px; color: var(--ink); }
+.hero { touch-action: pan-y; }
 .hero .lnk { position: absolute; top: 10px; right: 52px; width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .2);
   background: rgba(7, 20, 35, .74); display: grid; place-items: center; }
 .toast button { margin-left: 12px; border: 0; background: none; color: #0b6b2b; font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; padding: 0; }
+/* Edge of Space: product released from the space drone and dropped back to Earth */
+.hero .drop { display: block; width: 100%; aspect-ratio: 16 / 9; background: #050d18; overflow: hidden; }
+.drop svg { display: block; width: 100%; height: 100%; }
+.drop [class^="sd-"] { transform-box: fill-box; }
+.drop .sd-tw { animation: sdTw 3.2s ease-in-out infinite; }
+.drop .sd-bob { animation: sdBob 5s ease-in-out infinite; }
+.drop .sd-hatch { transform-origin: 0% 50%; animation: sdHatch 10s ease-in-out infinite; }
+.drop .sd-push { animation: sdPush 10s ease-in-out infinite; }
+.drop .sd-fall { transform: translateY(118px); animation: sdFall 10s linear infinite; }
+.drop .sd-box { transform-box: view-box; animation: sdSpin 10s ease-in-out infinite; }
+.drop .sd-chute { transform-origin: 50% 100%; animation: sdChute 10s ease-out infinite; }
+.drop .sd-sway { transform-box: view-box; transform-origin: 0 -50px; animation: sdSway 10s ease-in-out infinite; }
+.drop .sd-ring { transform-origin: 50% 50%; opacity: 0; animation: sdRing 10s ease-out infinite; }
+.drop .sd-glow { opacity: 0; animation: sdLand 10s ease-out infinite; }
+.drop .sd-thr { animation: sdTw 1.4s ease-in-out infinite; }
+@keyframes sdTw { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+@keyframes sdBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes sdHatch { 0%, 9% { transform: rotate(0); } 15%, 33% { transform: rotate(78deg); } 40%, 100% { transform: rotate(0); } }
+@keyframes sdPush { 0%, 14% { transform: translateY(0); } 23% { transform: translateY(15px); } 31%, 100% { transform: translateY(0); } }
+@keyframes sdFall {
+  0%, 13% { transform: translateY(0); opacity: 0; }
+  14% { transform: translateY(0); opacity: 1; }
+  23% { transform: translateY(26px); }
+  34% { transform: translateY(58px); }
+  90% { transform: translateY(206px); opacity: 1; }
+  96%, 100% { transform: translateY(206px); opacity: 0; }
+}
+@keyframes sdSpin { 0%, 23% { transform: rotate(0); } 33% { transform: rotate(32deg); } 40% { transform: rotate(-6deg); } 100% { transform: rotate(0); } }
+@keyframes sdSway { 0%, 38% { transform: rotate(0); } 52% { transform: rotate(4deg); } 68% { transform: rotate(-4deg); } 82% { transform: rotate(3deg); } 92%, 100% { transform: rotate(0); } }
+@keyframes sdChute { 0%, 31% { transform: scale(0); } 35% { transform: scale(.35, .9); } 40% { transform: scale(1.12, 1); } 44%, 100% { transform: scale(1); } }
+@keyframes sdRing { 0%, 89% { opacity: 0; transform: scale(1); } 91% { opacity: .9; } 98%, 100% { opacity: 0; transform: scale(11, 4); } }
+@keyframes sdLand { 0%, 89% { opacity: 0; } 92% { opacity: .85; } 99%, 100% { opacity: 0; } }
+.gal .animthumb { display: grid; place-items: center; width: 100%; height: 100%; background: linear-gradient(#050d18, #0a2340); color: var(--green); }
+.gal .animthumb .ico { width: 20px; height: 20px; }
+
 .mobilebar { display: none; }
 .rail .railclose { display: none; }
 .loading { position: absolute; inset: 0; display: grid; place-items: center; color: var(--ink-dim); font-size: 14px; pointer-events: none; }
@@ -409,6 +453,7 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
     pin: '<svg class="ico" viewBox="0 0 256 256" aria-hidden="true"><path d="M128,64a40,40,0,1,0,40,40A40,40,0,0,0,128,64Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,128Zm0-112a88.1,88.1,0,0,0-88,88c0,31.4,14.51,64.68,42,96.25a254.19,254.19,0,0,0,41.45,38.3,8,8,0,0,0,9.18,0A254.19,254.19,0,0,0,174,200.25c27.45-31.57,42-64.85,42-96.25A88.1,88.1,0,0,0,128,16Zm0,206c-16.53-13-72-60.75-72-118a72,72,0,0,1,144,0C200,161.23,144.53,209,128,222Z"/></svg>',
     copy: '<svg class="ico" viewBox="0 0 256 256" aria-hidden="true"><path d="M216,32H88a8,8,0,0,0-8,8V80H40a8,8,0,0,0-8,8V216a8,8,0,0,0,8,8H168a8,8,0,0,0,8-8V176h40a8,8,0,0,0,8-8V40A8,8,0,0,0,216,32ZM160,208H48V96H160Zm48-48H176V88a8,8,0,0,0-8-8H96V48H208Z"/></svg>',
     trash: '<svg class="ico" viewBox="0 0 256 256" aria-hidden="true"><path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"/></svg>',
+    chev: '<svg class="ico" viewBox="0 0 256 256" aria-hidden="true"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>',
     send: '<svg class="ico" viewBox="0 0 256 256" aria-hidden="true"><path d="M227.32,28.68a16,16,0,0,0-15.66-4.08l-.15,0L19.57,82.84a16,16,0,0,0-2.49,29.8L102,154l41.3,84.87A15.86,15.86,0,0,0,157.74,248q.69,0,1.38-.06a15.88,15.88,0,0,0,14-11.51l58.2-191.94c0-.05,0-.1,0-.15A16,16,0,0,0,227.32,28.68ZM157.83,231.85l-.05.14L118.42,151l47.24-47.25a8,8,0,0,0-11.31-11.31L107.1,139.71,26,100.58l.14,0L216,40Z"/></svg>'
   };
 
@@ -642,7 +687,19 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
   "viewPlan": "View plan",
   "newPlan": "Start a new plan",
   "planCleared": "Plan cleared",
-  "searchHint": "Press Enter to fly to the first match"
+  "searchHint": "Press Enter to fly to the first match",
+  "prevPhoto": "Previous photo",
+  "nextPhoto": "Next photo",
+  "spaceAnimCap": "Your product goes up, is released from the space drone, and drops back to Earth.",
+  "locGuide": "Location guide",
+  "g.where": "Where to watch",
+  "g.when": "Best times",
+  "g.around": "Around it",
+  "g.specs": "Screen specs",
+  "g.creative": "Creative specs",
+  "g.rules": "Content rules",
+  "g.lead": "Lead time",
+  "g.proof": "Proof of play"
  },
  "zh-CN": {
   "r.Space": "太空",
@@ -718,7 +775,19 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
   "viewPlan": "查看方案",
   "newPlan": "新建方案",
   "planCleared": "方案已清空",
-  "searchHint": "按回车键飞往第一个匹配结果"
+  "searchHint": "按回车键飞往第一个匹配结果",
+  "prevPhoto": "上一张照片",
+  "nextPhoto": "下一张照片",
+  "spaceAnimCap": "产品升空，由太空无人机释放，再落回地球。",
+  "locGuide": "地点指南",
+  "g.where": "最佳观看位置",
+  "g.when": "最佳时段",
+  "g.around": "周边",
+  "g.specs": "屏幕规格",
+  "g.creative": "素材规格",
+  "g.rules": "内容规定",
+  "g.lead": "提前预约时间",
+  "g.proof": "播出证明"
  },
  "zh-TW": {
   "r.Space": "太空",
@@ -794,7 +863,19 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
   "viewPlan": "查看方案",
   "newPlan": "建立新方案",
   "planCleared": "方案已清空",
-  "searchHint": "按 Enter 鍵飛往第一個符合的結果"
+  "searchHint": "按 Enter 鍵飛往第一個符合的結果",
+  "prevPhoto": "上一張照片",
+  "nextPhoto": "下一張照片",
+  "spaceAnimCap": "產品升空，由太空無人機釋出，再落回地球。",
+  "locGuide": "地點指南",
+  "g.where": "最佳觀看位置",
+  "g.when": "最佳時段",
+  "g.around": "周邊",
+  "g.specs": "螢幕規格",
+  "g.creative": "素材規格",
+  "g.rules": "內容規定",
+  "g.lead": "提前預約時間",
+  "g.proof": "播出證明"
  },
  "ko": {
   "r.Space": "우주",
@@ -870,7 +951,19 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
   "viewPlan": "플랜 보기",
   "newPlan": "새 플랜 시작",
   "planCleared": "플랜을 비웠습니다",
-  "searchHint": "Enter를 누르면 첫 번째 결과로 이동합니다"
+  "searchHint": "Enter를 누르면 첫 번째 결과로 이동합니다",
+  "prevPhoto": "이전 사진",
+  "nextPhoto": "다음 사진",
+  "spaceAnimCap": "제품이 올라가 우주 드론에서 분리된 뒤 지구로 내려옵니다.",
+  "locGuide": "장소 가이드",
+  "g.where": "관람하기 좋은 위치",
+  "g.when": "추천 시간대",
+  "g.around": "주변",
+  "g.specs": "스크린 사양",
+  "g.creative": "소재 규격",
+  "g.rules": "콘텐츠 규정",
+  "g.lead": "예약 소요 기간",
+  "g.proof": "송출 증빙"
  },
  "ja": {
   "r.Space": "宇宙",
@@ -946,7 +1039,19 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
   "viewPlan": "プランを見る",
   "newPlan": "新しいプランを作成",
   "planCleared": "プランを空にしました",
-  "searchHint": "Enterキーで最初の一致先へ移動します"
+  "searchHint": "Enterキーで最初の一致先へ移動します",
+  "prevPhoto": "前の写真",
+  "nextPhoto": "次の写真",
+  "spaceAnimCap": "商品は上昇し、宇宙ドローンから放出されて、地球へ降下します。",
+  "locGuide": "ロケーションガイド",
+  "g.where": "見やすい場所",
+  "g.when": "おすすめの時間帯",
+  "g.around": "周辺",
+  "g.specs": "スクリーン仕様",
+  "g.creative": "素材仕様",
+  "g.rules": "コンテンツ規定",
+  "g.lead": "必要な準備期間",
+  "g.proof": "放映証明"
  }
 };
   for (const l in NEW_UI) Object.assign(STR[l], NEW_UI[l]);
@@ -1513,23 +1618,77 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
     const same = isEnq(b) ? true : b.ratecard ? S.plan[i].opt === S.opt : S.plan[i].pkg === S.pkg;
     return same ? { i, same, label: t('inPlan'), icon: ICON.check, cls: ' ghost' } : { i, label: t('update'), icon: ICON.check, cls: '' };
   }
+  // Edge of Space hero: the product is pushed out of the space drone, opens a parachute and drifts gently down to land
+  function dropScene(label) {
+    let seed = 7;
+    const rnd = () => ((seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296);
+    let stars = '';
+    for (let i = 0; i < 54; i++) {
+      const x = (rnd() * 640).toFixed(0), y = (rnd() * 250).toFixed(0), r = (0.5 + rnd() * 1.1).toFixed(1);
+      stars += `<circle class="${i % 3 ? '' : 'sd-tw'}" cx="${x}" cy="${y}" r="${r}" fill="#dce9f5" opacity="${(0.35 + rnd() * 0.55).toFixed(2)}"${i % 3 ? '' : ` style="animation-delay:-${(rnd() * 3).toFixed(1)}s"`}/>`;
+    }
+    let lights = '';
+    for (let i = 0; i < 26; i++) {
+      const x = 90 + rnd() * 460, y = 300 + rnd() * 52;
+      lights += `<circle cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${(0.7 + rnd() * 0.9).toFixed(1)}" fill="#f4c56a" opacity="${(0.35 + rnd() * 0.4).toFixed(2)}"/>`;
+    }
+    const wing = (side) => `<g transform="scale(${side} 1)"><rect x="46" y="-2" width="14" height="4" fill="#2d5a8a"/><rect x="60" y="-11" width="86" height="22" rx="2" fill="url(#sdSolar)" stroke="#5aa7e1" stroke-width="1"/>
+      <path d="M81 -11V11M103 -11V11M125 -11V11M60 0H146" stroke="#0b2a47" stroke-width="1" opacity=".7"/></g>`;
+    return `<div class="drop"><svg viewBox="0 0 640 360" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${esc(label)}">
+      <defs>
+        <linearGradient id="sdSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#03070f"/><stop offset=".7" stop-color="#071a31"/><stop offset="1" stop-color="#0b2a4a"/></linearGradient>
+        <radialGradient id="sdEarth" cx=".5" cy=".12" r=".9"><stop offset="0" stop-color="#2e7fc4"/><stop offset=".35" stop-color="#14508c"/><stop offset="1" stop-color="#06203d"/></radialGradient>
+        <linearGradient id="sdSolar" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1d5b94"/><stop offset="1" stop-color="#0d3a66"/></linearGradient>
+        <radialGradient id="sdLandGlow"><stop offset="0" stop-color="#9dff6b" stop-opacity=".9"/><stop offset="1" stop-color="#73d43a" stop-opacity="0"/></radialGradient>
+        <filter id="sdBlur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="5"/></filter>
+      </defs>
+      <rect width="640" height="360" fill="url(#sdSky)"/>
+      ${stars}
+      <ellipse cx="320" cy="526" rx="574" ry="250" fill="#43c5ad" opacity=".5" filter="url(#sdBlur)"/>
+      <ellipse cx="320" cy="528" rx="566" ry="248" fill="url(#sdEarth)"/>
+      <ellipse cx="320" cy="528" rx="566" ry="248" fill="none" stroke="#7cd7f2" stroke-width="2" opacity=".65"/>
+      ${lights}
+      <ellipse class="sd-glow" cx="320" cy="282" rx="46" ry="12" fill="url(#sdLandGlow)"/>
+      <ellipse class="sd-ring" cx="320" cy="281" rx="6" ry="1.6" fill="none" stroke="#73d43a" stroke-width="1"/>
+      <g transform="translate(320 70)"><g class="sd-fall">
+        <g class="sd-sway"><g class="sd-chute"><path d="M-30 -50 Q0 -90 30 -50 Q15 -56 0 -50 Q-15 -56 -30 -50 Z" fill="#73d43a"/><path d="M-10 -53 Q0 -86 10 -53 Q5 -56 0 -52 Q-5 -56 -10 -53 Z" fill="#eef4f8" opacity=".85"/>
+          <path d="M-30 -50L-8 -11M30 -50L8 -11M0 -52V-11" stroke="#eef4f8" stroke-width="1" opacity=".8"/></g>
+        <g class="sd-box"><rect x="-11" y="-11" width="22" height="22" rx="3" fill="#e8eef3"/><rect x="-2" y="-11" width="4" height="22" fill="#73d43a"/><rect x="-11" y="-2" width="22" height="4" fill="#73d43a"/></g></g>
+      </g></g>
+      <g transform="translate(320 52)"><g class="sd-bob">
+        ${wing(1)}${wing(-1)}
+        <rect x="-48" y="-22" width="96" height="46" rx="15" fill="#14304f" stroke="#3a6ea5" stroke-width="1.5"/>
+        <rect x="-48" y="10" width="96" height="4" fill="#73d43a" opacity=".9"/>
+        <circle cx="0" cy="-5" r="10" fill="#0a1f38" stroke="#5aa7e1" stroke-width="1.5"/><circle cx="0" cy="-5" r="5.5" fill="#43c5ad"/>
+        <path d="M0 -22V-34M-5 -34H5" stroke="#a3b8cb" stroke-width="1.5" fill="none"/>
+        <rect class="sd-push" x="-4" y="14" width="8" height="10" rx="1" fill="#5aa7e1"/>
+        <g transform="translate(-16 24)"><rect class="sd-hatch" x="0" y="0" width="32" height="5" rx="1.5" fill="#0b1b2e" stroke="#5aa7e1" stroke-width="1"/></g>
+        <circle class="sd-thr" cx="-40" cy="27" r="3" fill="#73d43a"/><circle class="sd-thr" cx="40" cy="27" r="3" fill="#73d43a" style="animation-delay:-.7s"/>
+      </g></g>
+    </svg></div>`;
+  }
   function renderPanel() {
     const b = S.sel, c = S.cluster, P = $('#panel'), cur = curFor(b);
     const prevScroll = P.dataset.board === b.id && P.querySelector('.scroll') ? P.querySelector('.scroll').scrollTop : 0;  // redraws keep your place
     const sibs = c && c.boards.length > 1 ? `<div class="siblings" role="list" aria-label="${esc(t('inCity', { city: city(b) }))}">${c.boards.map((s) =>
       `<button class="sib" type="button" role="listitem" data-id="${esc(s.id)}" aria-current="${s.id === b.id}">${s.img ? `<img src="${esc(s.img)}" alt="">` : '<span class="noimg"></span>'}<span>${esc(tb(s, 'name'))}</span></button>`).join('')}</div>` : '';
-    const cr = b.credit;
-    const gal = b.gallery || [], gi = Math.min(S.gal[b.id] || 0, Math.max(gal.length - 1, 0)), heroSrc = gal.length ? gal[gi] : b.img;
-    const credit = cr && !cr.page && b.enquiry && cr.author ? `<p class="credit">${esc(t('photo'))} ${esc(cr.author)}</p>` : cr && cr.page ? `<p class="credit">${cr.shows && !/exact/i.test(cr.shows) ? esc(t('locPhoto')) + ' ' : ''}${esc(t('photo'))} <a href="${esc(cr.page)}" target="_blank" rel="noopener">${esc(cr.author || 'Wikimedia Commons')}</a>${cr.license ? ', ' + esc(cr.license) : ''}</p>` : '';
+    const gal = (b.gallery || []).map((g) => (typeof g === 'string' ? { src: g } : g));
+    if (isSpace(b)) gal.unshift({ anim: true });  // the drop animation leads the photos
+    const gi = Math.min(S.gal[b.id] || 0, Math.max(gal.length - 1, 0));
+    const cr = gal.length ? gal[gi] : b.credit, heroSrc = gal.length ? gal[gi].src : b.img, animOn = !!(gal[gi] && gal[gi].anim);
+    const placeOnly = cr && /location|building|generic/i.test(cr.shows || '');
+    const credit = animOn ? `<p class="credit">${esc(t('spaceAnimCap'))}</p>` : cr && !cr.page && b.enquiry && cr.author ? `<p class="credit">${esc(t('photo'))} ${esc(cr.author)}</p>` : cr && cr.page ? `<p class="credit">${placeOnly ? esc(t('locPhoto')) + ' ' : ''}${esc(t('photo'))} <a href="${esc(cr.page)}" target="_blank" rel="noopener">${esc(cr.author || 'Wikimedia Commons')}</a>${cr.license ? ', ' + esc(cr.license) : ''}</p>` : '';
+    const nav = gal.length > 1 ? `<button class="gnav prev" type="button" data-galstep="-1" aria-label="${esc(t('prevPhoto'))}">${ICON.chev}</button><button class="gnav next" type="button" data-galstep="1" aria-label="${esc(t('nextPhoto'))}">${ICON.chev}</button><span class="gcount num">${gi + 1} / ${gal.length}</span>` : '';
     const tk = b.truck || {};
     const canAdd = isEnq(b) ? !isSpace(b) : b.ratecard ? !!rcOption(b, S.opt) : !!b.packages[S.pkg];
     const det = tb(b, 'details') || [];
+    const guide = tb(b, 'guide') || [];
     const ps = planState(b);
     P.innerHTML = `<div class="scroll">
-      <div class="hero">${heroSrc ? `<img src="${esc(heroSrc)}" alt="${esc(tb(b, 'name'))}">` : '<div class="noimg"></div>'}
+      <div class="hero" id="hero">${animOn ? dropScene(t('spaceAnimCap')) : heroSrc ? `<img src="${esc(heroSrc)}" alt="${esc(tb(b, 'name'))}">` : '<div class="noimg"></div>'}${nav}
         <button class="lnk" type="button" data-act="link" aria-label="${esc(t('copyLink'))}" title="${esc(t('copyLink'))}">${ICON.link}</button>
         <button class="x" type="button" data-act="close" aria-label="${esc(t('close'))}">${ICON.x}</button></div>
-      ${gal.length > 1 ? `<div class="gal" role="group" aria-label="${esc(tb(b, 'name'))}">${gal.map((g, i) => `<button type="button" data-gal="${i}" aria-current="${i === gi}" aria-label="${esc(tb(b, 'name'))} ${i + 1}"><img src="${esc(g)}" alt=""></button>`).join('')}</div>` : ''}
+      ${gal.length > 1 ? `<div class="gal" role="group" aria-label="${esc(tb(b, 'name'))}">${gal.map((g, i) => `<button type="button" data-gal="${i}" aria-current="${i === gi}" aria-label="${esc(g.anim ? t('spaceAnimCap') : tb(b, 'name') + ' ' + i)}">${g.anim ? `<span class="animthumb"><svg class="ico" viewBox="0 0 256 256" aria-hidden="true"><path d="M240,128a15.74,15.74,0,0,1-7.6,13.51L88.32,229.65a16,16,0,0,1-16.2.3A15.86,15.86,0,0,1,64,216.13V39.87a15.86,15.86,0,0,1,8.12-13.82,16,16,0,0,1,16.2.3L232.4,114.49A15.74,15.74,0,0,1,240,128Z"/></svg></span>` : `<img src="${esc(g.src)}" alt="" loading="lazy">`}</button>`).join('')}</div>` : ''}
       ${credit}${sibs}
       <div class="body">
         <div><div class="where">${ICON.pin}${esc(city(b))}, ${esc(country(b))}${kindTag(b)}</div><h2>${esc(tb(b, 'name'))}</h2></div>
@@ -1543,6 +1702,7 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
           ${fact(t('size'), tb(b, 'size') || tk.screen_size)}
           ${fact(t('screen'), tk.screen_type ? tk.screen_type + (tk.sides ? ', ' + t('sides', { n: tk.sides }) : '') : '')}
         </dl>
+        ${guide.length ? `<section class="guide"><h3>${esc(t('locGuide'))}</h3><dl class="facts one">${guide.map((g) => fact(t('g.' + g.k), g.text)).join('')}</dl></section>` : ''}
         ${det.length ? `<dl class="facts one">${det.map((d) => fact(d.label, d.value)).join('')}</dl>` : ''}
         ${tb(b, 'route') ? `<p class="note"><b>${esc(t('route'))}.</b> ${esc(tb(b, 'route'))}</p>` : ''}
         ${isSpace(b) ? spaceView() : isEnq(b) ? enquiryView() : b.ratecard ? rateCardView(b, cur) : estimateView(b, cur)}
@@ -1771,6 +1931,7 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
       if (act === 'inquire') return renderForm();
       if (act === 'toplan') { S.view = 'plan'; return renderPlan(); }
       if (act === 'copyinq') return copyText($('#inqText').textContent, $('#inqText'));
+      if (el.dataset.galstep && S.sel) { const n = (S.sel.gallery || []).length + (isSpace(S.sel) ? 1 : 0), i = S.gal[S.sel.id] || 0; S.gal[S.sel.id] = (i + +el.dataset.galstep + n) % n; return renderPanel(); }
       if (el.dataset.gal != null && S.sel) { S.gal[S.sel.id] = +el.dataset.gal; return renderPanel(); }
       if (el.dataset.sptab) { syncSpace(); S.sp.tab = el.dataset.sptab; S.sp.err = ''; return renderPanel(); }
       if (el.dataset.spbook) { S.sp.tab = 'call'; S.sp.done = null; S.sp.err = ''; renderPanel(); const sc = $('#panel .scroll'); if (sc) sc.scrollTop = 0; return; }
@@ -1795,6 +1956,11 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
     $('#railOpen').addEventListener('click', () => document.body.classList.add('rail-open'));
     $('#railClose').addEventListener('click', () => document.body.classList.remove('rail-open'));
     $('#globe').addEventListener('click', () => document.body.classList.remove('rail-open'));
+    const stepGal = (d) => { const n = S.sel && (S.sel.gallery || []).length + (isSpace(S.sel) ? 1 : 0); if (!n || n < 2) return; S.gal[S.sel.id] = ((S.gal[S.sel.id] || 0) + d + n) % n; renderPanel(); };
+    let swx = null;
+    P.addEventListener('touchstart', (e) => { swx = e.target.closest('#hero') ? e.touches[0].clientX : null; }, { passive: true });
+    P.addEventListener('touchend', (e) => { if (swx == null) return; const dx = e.changedTouches[0].clientX - swx; swx = null; if (Math.abs(dx) > 40) stepGal(dx < 0 ? 1 : -1); });
+    addEventListener('keydown', (e) => { if (!$('#panel').hidden && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) stepGal(e.key === 'ArrowRight' ? 1 : -1); });
     addEventListener('keydown', (e) => { if (e.key === 'Escape') { if (!$('#panel').hidden) closePanel(); document.body.classList.remove('rail-open'); } });
   }
 
