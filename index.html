@@ -240,7 +240,7 @@ body.panel-open .planbtn { right: calc(var(--panel-w) + 28px); }
 .toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 9; background: var(--ink); color: var(--night); padding: 9px 16px;
   border-radius: 999px; font-size: 14px; font-weight: 500; animation: peek .2s var(--ease); }
 
-/* astronaut (Edge of Space) floating in orbit */
+/* astronaut (Space) floating in orbit */
 .mk.astro button { width: 72px; height: 90px; border-radius: 0; }
 .mk.astro svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 0 12px rgba(90, 167, 225, .6)); transition: filter .2s; }
 .mk.astro button:hover svg, .mk.astro.active svg { filter: drop-shadow(0 0 18px rgba(115, 212, 58, .85)); }
@@ -300,7 +300,7 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
 .hero .lnk { position: absolute; top: 10px; right: 52px; width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .2);
   background: rgba(7, 20, 35, .74); display: grid; place-items: center; }
 .toast button { margin-left: 12px; border: 0; background: none; color: #0b6b2b; font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; padding: 0; }
-/* Edge of Space: product released from the space drone and dropped back to Earth */
+/* Space: product released from the space drone and dropped back to Earth */
 .hero .drop { display: block; width: 100%; aspect-ratio: 16 / 9; background: #050d18; overflow: hidden; }
 .drop svg { display: block; width: 100%; height: 100%; }
 .drop [class^="sd-"] { transform-box: fill-box; }
@@ -1738,7 +1738,7 @@ vec3 gCol = pow( vec3( 0.035, 0.085, 0.150 ), vec3( 2.2 ) );
   function enquiryView() {
     return `<div class="meta"><span class="badge">${esc(t('enqBadge'))}</span></div><p class="note">${esc(t('enqNote'))}</p>`;
   }
-  // ----- Edge of Space: send a concept, or book a call, or both -----
+  // ----- Space: send a concept, or book a call, or both -----
   const todayStr = () => new Date().toISOString().slice(0, 10);
   function syncSpace() {
     const form = $('#spaceForm'); if (!form) return;
@@ -1788,7 +1788,7 @@ vec3 gCol = pow( vec3( 0.035, 0.085, 0.150 ), vec3( 2.2 ) );
     const same = isEnq(b) ? true : b.ratecard ? S.plan[i].opt === S.opt : S.plan[i].pkg === S.pkg;
     return same ? { i, same, label: t('inPlan'), icon: ICON.check, cls: ' ghost' } : { i, label: t('update'), icon: ICON.check, cls: '' };
   }
-  // Edge of Space hero: the product is pushed out of the space drone, opens a parachute and drifts gently down to land
+  // Space hero: the product is pushed out of the space drone, opens a parachute and drifts gently down to land
   function dropScene(label) {
     let seed = 7;
     const rnd = () => ((seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296);
