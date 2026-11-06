@@ -1348,7 +1348,7 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
   // equal-spacing dot grid over lat/lng, lights the dots the mask calls land, and shades the day side from the real sun position.
   // Two grid densities cross-fade as you zoom so dots keep a steady size on screen. In route mode (plan open) the same shader drops to a
   // faint lattice so the borders and the arcs between plan cities carry the picture.
-  const ROUTE = { on: false, key: '', raf: 0, keys: new Set() };
+  const ROUTE = { on: false, key: '', setKey: '', raf: 0, keys: new Set() };
   const MK = new Set();   // every pin element markerEl has built, attached to the page yet or not
   const DOT_PARS = `
 uniform vec3 sunDir; uniform float dnMix; uniform float routeMix; uniform float uStep; uniform float uFine;
@@ -1476,9 +1476,12 @@ vec3 gCol = pow( vec3( 0.035, 0.085, 0.150 ), vec3( 2.2 ) );
     const s = vec.reduce((a, v) => [a[0] + v[0], a[1] + v[1], a[2] + v[2]], [0, 0, 0]), n = Math.hypot(...s) || 1, m = s.map((x) => x / n);
     const lat = Math.asin(Math.max(-1, Math.min(1, m[2]))) / r, lng = Math.atan2(m[1], m[0]) / r;
     const spread = vec.reduce((mx, v) => Math.max(mx, Math.acos(Math.max(-1, Math.min(1, v[0] * m[0] + v[1] * m[1] + v[2] * m[2])))), 0);
-    const alt = Math.min(3, Math.max(1.25, 0.9 + spread * 1.9));
+    let alt = Math.min(3, Math.max(1.25, 0.9 + spread * 1.9)), vLat = lat, vLng = lng;
+    // At the farthest camera distance only about 75 degrees around the view centre is visible, so a route that spans more than ~70 degrees
+    // (or whose points nearly cancel out, like New York to Perth) cannot all be in view. Start from the first stop instead of hiding both ends.
+    if (cl.length > 1 && (spread > 1.22 || n < 0.4)) { vLat = cl[0].lat; vLng = cl[0].lng; alt = 2.6; }
     setRotate(false);
-    world.pointOfView({ lat: lat - (phone() ? 12 : 0), lng, altitude: phone() ? alt * 1.2 : alt }, reduceMotion ? 0 : 1100);
+    world.pointOfView({ lat: vLat - (phone() ? 12 : 0), lng: vLng, altitude: phone() ? alt * 1.2 : alt }, reduceMotion ? 0 : 1100);
   }
   function syncRoute() {
     if (!world) return;
@@ -1488,14 +1491,14 @@ vec3 gCol = pow( vec3( 0.035, 0.085, 0.150 ), vec3( 2.2 ) );
     MK.forEach((n) => n.classList.toggle('inplan', ROUTE.keys.has(n.dataset.key)));
     document.body.classList.toggle('route', on);
     if (on === ROUTE.on && key === ROUTE.key) return;
-    const wasOn = ROUTE.on;
-    ROUTE.on = on; ROUTE.key = key;
+    const wasOn = ROUTE.on, setKey = [...ROUTE.keys].sort().join('|'), sameSet = setKey === ROUTE.setKey;   // reordering stops must not move the camera
+    ROUTE.on = on; ROUTE.key = key; ROUTE.setKey = setKey;
     world.polygonStrokeColor(() => (on ? BORDER_ROUTE : PHOTO ? 'rgba(170, 205, 235, 0.42)' : BORDER));
     world.arcsData(cl.slice(1).map((c, i) => ({ a: cl[i], b: c })));
     world.ringsData(on ? cl : []);
     refreshMarkers();
     if (on !== wasOn) setRouteMix(on ? 1 : 0);
-    if (on) fitRoute(cl);
+    if (on && (!wasOn || !sameSet)) fitRoute(cl);
   }
 
   // ----- city labels that appear as you zoom in -----
@@ -1897,7 +1900,7 @@ vec3 gCol = pow( vec3( 0.035, 0.085, 0.150 ), vec3( 2.2 ) );
     savePlan(); renderPanel(); toast(msg, added ? { label: t('viewPlan'), fn: openPlan } : undefined);
   }
   function openPlan() {
-    S.sel = null; S.cluster = null; S.view = 'plan'; if (world) world.ringsData([]); refreshMarkers();
+    S.sel = null; S.cluster = null; S.view = 'plan'; if (world && !ROUTE.on) world.ringsData([]); refreshMarkers();
     document.body.classList.add('panel-open'); document.body.classList.remove('rail-open');
     renderPlan();
   }
@@ -2124,7 +2127,7 @@ vec3 gCol = pow( vec3( 0.035, 0.085, 0.150 ), vec3( 2.2 ) );
     P.addEventListener('change', (e) => {
       const n = e.target;
       if (n.matches('select[data-i]')) { const p = S.plan[+n.dataset.i]; if (S.byId[p.id].ratecard) p.opt = n.value; else p.pkg = n.value; savePlan(); renderPlan(); }
-      if (n.matches('input[data-d]')) { S.plan[+n.dataset.d].date = n.value; savePlan(); }
+      if (n.matches('input[data-d]')) { S.plan[+n.dataset.d].date = n.value; savePlan(); syncRoute(); }   // dated plans run in date order, so the arcs follow
       if (n.id === 'sp-call') { syncSpace(); renderPanel(); }
     });
     P.addEventListener('input', (e) => {
