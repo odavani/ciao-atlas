@@ -75,6 +75,10 @@ body:not(.panel-open) #globe { transform: translateX(calc(var(--rail-w) / 2)); }
 .mk.multi .lbl { left: 16px; }
 .mk.major .lbl, body.zoomed .mk .lbl, .mk.active .lbl { opacity: 1; }
 .mk.dim .lbl { opacity: 0; }
+/* route mode (plan open): only the plan's cities stay lit */
+body.route .mk:not(.inplan) { opacity: .14; pointer-events: none; }
+body.route .mk.inplan .lbl { opacity: 1; }
+body.route .cl { opacity: 0 !important; }
 .scene-tooltip, .float-tooltip-kap { font: 500 12.5px var(--font-body) !important; color: var(--ink) !important;
   background: rgba(13, 34, 56, .92) !important; border: 1px solid var(--line); border-radius: 4px; padding: 3px 8px !important; }
 
@@ -482,7 +486,7 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
       estTotal: 'Estimated total', date: 'Date', option: 'Option', remove: 'Remove',
       planNote: 'Mix billboards across the quarter: a short burst for each birthday, a week for the launch. Send the plan and Ciao Group will contact you to confirm dates.',
       planEmpty: 'Your plan is empty. Open any billboard on the globe and choose Add to plan. Build a quarter of birthdays, anniversaries and launches, then send it in one go.',
-      sendInquiry: 'Send inquiry', formTitle: 'Send your plan', formIntro: 'Tell us how to reach you. Ciao Group will contact you directly about this plan.',
+      sendInquiry: 'Send inquiry', ratePdf: 'Rate card (PDF)', kitPdf: 'Media kit (PDF)', formTitle: 'Send your plan', formIntro: 'Tell us how to reach you. Ciao Group will contact you directly about this plan.',
       name: 'Name', email: 'Email', contact: 'WeChat, WhatsApp or phone (optional)', occasion: 'Occasion', 'o.birthday': 'Birthday', 'o.anniversary': 'Anniversary', 'o.launch': 'Launch', 'o.other': 'Other',
       message: 'Anything else? (optional)', back: 'Back to plan', sending: 'Sending…', formErr: 'Add your name and a valid email so we can reach you.',
       sentTitle: 'Inquiry sent', sentText: 'Ciao Group will contact you soon about your plan.',
@@ -512,7 +516,7 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
       estTotal: '预估合计', date: '日期', option: '选项', remove: '移除',
       planNote: '一个季度可以组合多块大屏：每个生日一次应援时刻，新品发布投放一周。提交方案后，Ciao Group 会联系你确认档期。',
       planEmpty: '你的方案还是空的。在地球上打开任意大屏，选择「加入方案」。把一个季度的生日、纪念日和发布活动排好，一次提交。',
-      sendInquiry: '提交咨询', formTitle: '提交你的方案', formIntro: '留下联系方式，Ciao Group 会就此方案直接联系你。',
+      sendInquiry: '提交咨询', ratePdf: '下载报价单 (PDF)', kitPdf: '媒体资料 (PDF)', formTitle: '提交你的方案', formIntro: '留下联系方式，Ciao Group 会就此方案直接联系你。',
       name: '姓名', email: '邮箱', contact: '微信 / WhatsApp / 电话（选填）', occasion: '用途', 'o.birthday': '生日应援', 'o.anniversary': '纪念日', 'o.launch': '新品发布', 'o.other': '其他',
       message: '其他需求（选填）', back: '返回方案', sending: '发送中…', formErr: '请填写姓名和有效邮箱，方便我们联系你。',
       sentTitle: '咨询已发送', sentText: 'Ciao Group 会尽快就你的方案联系你。',
@@ -542,7 +546,7 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
       estTotal: '預估合計', date: '日期', option: '選項', remove: '移除',
       planNote: '一季可以組合多塊大屏：每個生日一次應援時刻，新品發佈投放一週。送出方案後，Ciao Group 會聯絡你確認檔期。',
       planEmpty: '你的方案還是空的。在地球上打開任一大屏，選擇「加入方案」。排好一季的生日、紀念日與發佈活動，一次送出。',
-      sendInquiry: '送出諮詢', formTitle: '送出你的方案', formIntro: '留下聯絡方式，Ciao Group 會就此方案直接聯絡你。',
+      sendInquiry: '送出諮詢', ratePdf: '下載報價單 (PDF)', kitPdf: '媒體資料 (PDF)', formTitle: '送出你的方案', formIntro: '留下聯絡方式，Ciao Group 會就此方案直接聯絡你。',
       name: '姓名', email: '電郵', contact: '微信 / WhatsApp / 電話（選填）', occasion: '用途', 'o.birthday': '生日應援', 'o.anniversary': '紀念日', 'o.launch': '新品發佈', 'o.other': '其他',
       message: '其他需求（選填）', back: '返回方案', sending: '傳送中…', formErr: '請填寫姓名與有效電郵，方便我們聯絡你。',
       sentTitle: '諮詢已送出', sentText: 'Ciao Group 會盡快就你的方案聯絡你。',
@@ -572,7 +576,7 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
       estTotal: '예상 합계', date: '날짜', option: '옵션', remove: '제거',
       planNote: '분기 동안 여러 빌보드를 조합하세요. 생일마다 짧은 모먼트, 런칭에는 1주. 플랜을 보내면 Ciao Group이 날짜 확정을 위해 연락드립니다.',
       planEmpty: '플랜이 비어 있습니다. 지구본에서 빌보드를 열고 플랜에 추가를 누르세요. 한 분기의 생일, 기념일, 런칭을 모아 한 번에 보내세요.',
-      sendInquiry: '문의 보내기', formTitle: '플랜 보내기', formIntro: '연락처를 알려 주세요. Ciao Group이 이 플랜에 대해 직접 연락드립니다.',
+      sendInquiry: '문의 보내기', ratePdf: '요금표 (PDF)', kitPdf: '미디어 키트 (PDF)', formTitle: '플랜 보내기', formIntro: '연락처를 알려 주세요. Ciao Group이 이 플랜에 대해 직접 연락드립니다.',
       name: '이름', email: '이메일', contact: '카카오톡, WhatsApp 또는 전화 (선택)', occasion: '목적', 'o.birthday': '생일', 'o.anniversary': '기념일', 'o.launch': '런칭', 'o.other': '기타',
       message: '추가 요청 (선택)', back: '플랜으로 돌아가기', sending: '보내는 중…', formErr: '연락을 위해 이름과 올바른 이메일을 입력하세요.',
       sentTitle: '문의를 보냈습니다', sentText: 'Ciao Group이 곧 플랜에 대해 연락드립니다.',
@@ -602,7 +606,7 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
       estTotal: '概算合計', date: '日付', option: 'オプション', remove: '削除',
       planNote: '四半期で複数のビルボードを組み合わせましょう。誕生日ごとに短いモーメント、ローンチには1週間。プランを送ると、Ciao Group から日程確認のご連絡をします。',
       planEmpty: 'プランは空です。地球儀でビルボードを開き、「プランに追加」を選んでください。四半期分の誕生日・記念日・ローンチをまとめて送れます。',
-      sendInquiry: '問い合わせる', formTitle: 'プランを送信', formIntro: 'ご連絡先を教えてください。このプランについて Ciao Group から直接ご連絡します。',
+      sendInquiry: '問い合わせる', ratePdf: '料金表 (PDF)', kitPdf: 'メディアキット (PDF)', formTitle: 'プランを送信', formIntro: 'ご連絡先を教えてください。このプランについて Ciao Group から直接ご連絡します。',
       name: 'お名前', email: 'メール', contact: 'LINE・WhatsApp・電話（任意）', occasion: '目的', 'o.birthday': '誕生日', 'o.anniversary': '記念日', 'o.launch': 'ローンチ', 'o.other': 'その他',
       message: 'その他のご要望（任意）', back: 'プランに戻る', sending: '送信中…', formErr: 'ご連絡のため、お名前と正しいメールアドレスを入力してください。',
       sentTitle: '送信しました', sentText: 'プランについて Ciao Group からまもなくご連絡します。',
@@ -1210,17 +1214,22 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
 
   // ---------- globe ----------
   let world;
+  // Default globe is the dot-matrix shader (no earth photos). Add ?globe=photo to the URL to get the old NASA texture globe back.
+  const PHOTO = /[?&]globe=photo\b/.test(location.search);
+  const BORDER = 'rgba(170, 205, 235, 0.30)', BORDER_ROUTE = 'rgba(110, 190, 245, 0.78)';
   function initGlobe() {
     const el = $('#globe');
     world = new Globe(el, { animateIn: !reduceMotion })
-      .globeImageUrl('assets/earth-night.jpg')
-      .bumpImageUrl('assets/earth-topology.png')
       .backgroundColor('rgba(0,0,0,0)')
       .showAtmosphere(true).atmosphereColor('#5aa7e1').atmosphereAltitude(0.16)
       .htmlElementsData(S.clusters).htmlLat('lat').htmlLng('lng').htmlAltitude((c) => (c.city ? 0.004 : isSpace(c.boards[0]) ? 0.6 : 0.008)).htmlTransitionDuration(0).htmlElement(markerEl)
       .ringsData([]).ringLat('lat').ringLng('lng').ringColor(() => (x) => `rgba(115,212,58,${1 - x})`)
       .ringMaxRadius(3.2).ringPropagationSpeed(2.4).ringRepeatPeriod(1100)
+      .arcsData([]).arcStartLat((d) => d.a.lat).arcStartLng((d) => d.a.lng).arcEndLat((d) => d.b.lat).arcEndLng((d) => d.b.lng)
+      .arcColor(() => ['rgba(67, 197, 173, 0.30)', 'rgba(115, 212, 58, 0.95)']).arcStroke(0.45).arcAltitudeAutoScale(0.38)
+      .arcDashLength(0.55).arcDashGap(0.1).arcDashAnimateTime(reduceMotion ? 0 : 2800).arcsTransitionDuration(0)
       .width(el.clientWidth).height(el.clientHeight);
+    if (PHOTO) world.globeImageUrl('assets/earth-night.jpg').bumpImageUrl('assets/earth-topology.png');
     if (typeof world.htmlElementVisibilityModifier === 'function') {
       world.htmlElementVisibilityModifier((node, visible) => { node.style.opacity = visible ? '' : '0'; node.style.pointerEvents = visible ? '' : 'none'; });
     }
@@ -1240,25 +1249,26 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
         .pathColor(() => 'rgba(67, 197, 173, 0.5)').pathStroke(null).pathDashLength(0.012).pathDashGap(0.012)
         .pathDashAnimateTime(reduceMotion ? 0 : 160000).pathTransitionDuration(0);
     }
-    upgradeGlobe();
-    initDayNight();
+    const topoP = fetch('assets/countries-110m.json').then((r) => r.json());
+    if (PHOTO) { upgradeGlobe(); initDayNight(); } else initDots(topoP);
     loadCities();
     const c = world.controls();
     c.autoRotate = !reduceMotion; c.autoRotateSpeed = 0.35; c.enableDamping = true; c.minDistance = 130; c.maxDistance = 520;
     world.pointOfView({ lat: 28, lng: phone() ? -4 : 20, altitude: phone() ? 3.1 : 2.3 }, 0);  // phones start further west so the astronaut is in view
+    setDotLOD(phone() ? 3.1 : 2.3);
     el.addEventListener('pointerdown', () => { setRotate(false); hideHint(); });
     setRotate(c.autoRotate);
-    if (typeof world.onZoom === 'function') world.onZoom((pov) => { document.body.classList.toggle('zoomed', pov.altitude < 1.35); syncCities(pov.altitude); });
-    fetch('assets/countries-110m.json').then((r) => r.json()).then((topo) => {
+    if (typeof world.onZoom === 'function') world.onZoom((pov) => { document.body.classList.toggle('zoomed', pov.altitude < 1.35); syncCities(pov.altitude); setDotLOD(pov.altitude); if (!PHOTO) lazyBorders(pov.altitude); });
+    topoP.then((topo) => {
       if (!window.topojson) return;
       const feats = topojson.feature(topo, topo.objects.countries).features.filter((f) => f.properties.name !== 'Antarctica');
       world.polygonsData(feats).polygonAltitude(0.004)
-        .polygonCapColor(() => 'rgba(200, 222, 240, 0.035)').polygonSideColor(() => 'rgba(0, 0, 0, 0)')
-        .polygonStrokeColor(() => 'rgba(170, 205, 235, 0.42)')
+        .polygonCapColor(() => (PHOTO ? 'rgba(200, 222, 240, 0.035)' : 'rgba(0, 0, 0, 0)')).polygonSideColor(() => 'rgba(0, 0, 0, 0)')
+        .polygonStrokeColor(() => (ROUTE.on ? BORDER_ROUTE : PHOTO ? 'rgba(170, 205, 235, 0.42)' : BORDER))
         .polygonLabel((f) => esc((S.i18n[S.lang] && S.i18n[S.lang].countries && S.i18n[S.lang].countries[f.properties.name]) || f.properties.name))
         .polygonsTransitionDuration(0);
     }).catch(() => {});
-    addEventListener('resize', () => world.width(el.clientWidth).height(el.clientHeight));
+    addEventListener('resize', () => { world.width(el.clientWidth).height(el.clientHeight); setDotLOD(world.pointOfView().altitude); });
   }
   // Crisp when zoomed: the 4K texture loads first (fast start), then desktop browsers swap in the 8K NASA night map,
   // switch to finer country borders and turn on full anisotropic filtering. Phones keep the lighter 4K set.
@@ -1333,6 +1343,161 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
     const b = $('#tDay'); b.setAttribute('aria-pressed', on); b.setAttribute('aria-label', t(on ? 'toggleNight' : 'toggleDay')); b.title = b.getAttribute('aria-label');
   }
 
+  // ----- dot-matrix globe: one sphere, one shader, no earth photos -----
+  // The land mask is rasterised from the 110m country shapes at load (a small generated PNG, nothing downloaded). The fragment shader lays an
+  // equal-spacing dot grid over lat/lng, lights the dots the mask calls land, and shades the day side from the real sun position.
+  // Two grid densities cross-fade as you zoom so dots keep a steady size on screen. In route mode (plan open) the same shader drops to a
+  // faint lattice so the borders and the arcs between plan cities carry the picture.
+  const ROUTE = { on: false, key: '', raf: 0, keys: new Set() };
+  const MK = new Set();   // every pin element markerEl has built, attached to the page yet or not
+  const DOT_PARS = `
+uniform vec3 sunDir; uniform float dnMix; uniform float routeMix; uniform float uStep; uniform float uFine;
+varying vec3 vObjPos;
+float dotField( float lat, float lng, float stp, out vec2 ctr ) {
+  float row = floor( lat / stp + 0.5 );
+  float rLat = row * stp;
+  float cr = max( cos( radians( rLat ) ), 0.02 );
+  float n = max( 1.0, floor( 360.0 * cr / stp + 0.5 ) );
+  float lonStep = 360.0 / n;
+  float off = 0.5 * mod( row, 2.0 );
+  float k = floor( ( lng + 180.0 ) / lonStep - off + 0.5 );
+  float cLng = ( k + off ) * lonStep - 180.0;
+  ctr = vec2( cLng, rLat );
+  return length( vec2( ( lng - cLng ) * cr, lat - rLat ) );
+}`;
+  const DOT_MAIN = `
+vec3 gCol = pow( vec3( 0.035, 0.085, 0.150 ), vec3( 2.2 ) );
+#ifdef USE_MAP
+{
+  float lng = vMapUv.x * 360.0 - 180.0;
+  float lat = vMapUv.y * 180.0 - 90.0;
+  float dayT = dnMix * smoothstep( -0.10, 0.30, dot( normalize( vObjPos ), normalize( sunDir ) ) );
+  float facing = clamp( dot( normalize( vNormal ), normalize( vViewPosition ) ), 0.0, 1.0 );
+  float limb = smoothstep( 0.03, 0.42, facing );
+  float px = length( fwidth( vObjPos ) ) * 0.5729578;
+  vec3 col = mix( vec3( 0.035, 0.085, 0.150 ), vec3( 0.060, 0.150, 0.265 ), dayT );
+  vec3 landCol = mix( vec3( 0.20, 0.42, 0.64 ), vec3( 0.80, 0.91, 1.0 ), dayT );
+  vec3 seaCol = vec3( 0.35, 0.60, 0.85 );
+  vec3 latCol = vec3( 0.47, 0.69, 0.90 );
+  float landA = mix( 0.62, 0.95, dayT );
+  float seaA = mix( 0.16, 0.28, dayT );
+  for ( int i = 0; i < 2; i++ ) {
+    float stp = i == 0 ? uStep : uStep * 0.5;
+    float wt = i == 0 ? 1.0 - uFine : uFine;
+    if ( wt < 0.003 ) continue;
+    vec2 ctr;
+    float d = dotField( lat, lng, stp, ctr );
+    float land = step( 0.5, textureLod( map, vec2( ( ctr.x + 180.0 ) / 360.0, ( ctr.y + 90.0 ) / 180.0 ), 0.0 ).a );
+    float w = mix( land, 1.0, routeMix );
+    float rl = stp * mix( 0.30, 0.12, routeMix );
+    float rs = stp * mix( 0.15, 0.12, routeMix );
+    float cl = 1.0 - smoothstep( rl - px, rl + px, d );
+    float cs = 1.0 - smoothstep( rs - px, rs + px, d );
+    float a = ( cl * w * mix( landA, 0.34, routeMix ) + cs * ( 1.0 - w ) * mix( seaA, 0.34, routeMix ) ) * wt * limb;
+    vec3 dc = mix( mix( seaCol, landCol, w ), latCol, routeMix );
+    col = mix( col, dc, clamp( a, 0.0, 1.0 ) );
+  }
+  gCol = pow( col, vec3( 2.2 ) );
+}
+#endif`;
+  function landMaskURL(feats) {
+    const W = 1024, H = 512, c = document.createElement('canvas'); c.width = W; c.height = H;
+    const x = c.getContext('2d'); x.fillStyle = '#fff';
+    const X = (lng) => ((lng + 180) / 360) * W, Y = (lat) => ((90 - lat) / 180) * H;
+    feats.forEach((f) => {
+      const g = f.geometry, polys = g.type === 'Polygon' ? [g.coordinates] : g.type === 'MultiPolygon' ? g.coordinates : [];
+      polys.forEach((poly) => {
+        x.beginPath();
+        poly.forEach((ring) => { ring.forEach(([lng, lat], i) => (i ? x.lineTo(X(lng), Y(lat)) : x.moveTo(X(lng), Y(lat)))); x.closePath(); });
+        x.fill('evenodd');
+      });
+    });
+    return c.toDataURL('image/png');
+  }
+  function initDots(topoP) {
+    let mat; try { mat = world.globeMaterial(); } catch { return; }
+    const U = DN.U = { sunDir: { value: sunPosition().vec }, dnMix: { value: S.dn ? 1 : 0 }, routeMix: { value: 0 }, uStep: { value: 3.2 }, uFine: { value: 1 } };
+    mat.onBeforeCompile = (shader) => {
+      Object.assign(shader.uniforms, U);
+      shader.vertexShader = shader.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vObjPos;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvObjPos = position;');
+      const out = 'gl_FragColor = vec4( gCol, 1.0 );';
+      let f = shader.fragmentShader.replace('#include <common>', '#include <common>\n' + DOT_PARS).replace('#include <map_fragment>', DOT_MAIN);
+      f = f.includes('#include <opaque_fragment>') ? f.replace('#include <opaque_fragment>', out) : f.replace('#include <output_fragment>', out);
+      shader.fragmentShader = f;
+    };
+    mat.customProgramCacheKey = () => 'ciao-dots';
+    mat.needsUpdate = true;
+    setInterval(() => { U.sunDir.value = sunPosition().vec; }, 60000);
+    setDotLOD(world.pointOfView().altitude);
+    topoP.then((topo) => {
+      if (!window.topojson) return;
+      world.globeImageUrl(landMaskURL(topojson.feature(topo, topo.objects.countries).features.filter((f) => f.properties.name !== 'Antarctica')));
+    }).catch(() => {});
+  }
+  // Pick the grid so neighbouring dots sit about 8.6px apart at any zoom, blending the two nearest power-of-two densities.
+  function setDotLOD(alt) {
+    const U = DN.U; if (PHOTO || !U || !U.uStep) return;
+    const H = Math.max(300, $('#globe').clientHeight), d = 1 + alt;
+    const pxDeg = (H / 2) / 0.4663 / Math.sqrt(d * d - 1) * (Math.PI / 180);
+    const want = Math.max(0.25, 8.6 / pxDeg);
+    const m = Math.min(3, Math.max(0, Math.floor(Math.log2(want / 0.2))));
+    const C = 0.2 * 2 ** m, frac = Math.min(1, Math.max(0, Math.log2(want / C)));
+    U.uStep.value = C * 2; U.uFine.value = 1 - frac;
+  }
+  // The 50m borders are heavy to build; fetch them only once someone zooms in far enough to see the difference.
+  let hiBorders = false;
+  function lazyBorders(alt) {
+    if (hiBorders || phone() || alt > 0.95) return;
+    hiBorders = true;
+    fetch('assets/countries-50m.json').then((r) => r.json()).then((topo) => {
+      if (!window.topojson) return;
+      world.polygonsData(topojson.feature(topo, topo.objects.countries).features.filter((f) => f.properties.name !== 'Antarctica'));
+    }).catch(() => { hiBorders = false; });
+  }
+
+  // ----- route mode: while the plan is open the globe turns into a route map (lattice, bright borders, arcs between the plan's cities) -----
+  const ROUTE_VIEWS = ['plan', 'form', 'sent', 'fallback'];
+  function planClusters() {
+    const items = S.plan.map((p, i) => ({ p, i })).filter(({ p }) => S.byId[p.id]);
+    if (items.some(({ p }) => p.date)) items.sort((a, b) => (a.p.date || '9999').localeCompare(b.p.date || '9999') || a.i - b.i);   // dated plans run in date order
+    const seen = new Set(), out = [];
+    items.forEach(({ p }) => { const b = S.byId[p.id], c = S.clusters.find((k) => k.boards.includes(b)); if (c && !seen.has(c.key)) { seen.add(c.key); out.push(c); } });
+    return out;
+  }
+  function setRouteMix(to) {
+    const U = DN.U; cancelAnimationFrame(ROUTE.raf);
+    if (!U || !U.routeMix) return;
+    const from = U.routeMix.value, t0 = performance.now(), dur = reduceMotion ? 1 : 700;
+    const tick = (now) => { const k = Math.min(1, (now - t0) / dur); U.routeMix.value = from + (to - from) * k * k * (3 - 2 * k); if (k < 1) ROUTE.raf = requestAnimationFrame(tick); };
+    ROUTE.raf = requestAnimationFrame(tick);
+  }
+  function fitRoute(cl) {
+    const r = Math.PI / 180, vec = cl.map((c) => [Math.cos(c.lat * r) * Math.cos(c.lng * r), Math.cos(c.lat * r) * Math.sin(c.lng * r), Math.sin(c.lat * r)]);
+    const s = vec.reduce((a, v) => [a[0] + v[0], a[1] + v[1], a[2] + v[2]], [0, 0, 0]), n = Math.hypot(...s) || 1, m = s.map((x) => x / n);
+    const lat = Math.asin(Math.max(-1, Math.min(1, m[2]))) / r, lng = Math.atan2(m[1], m[0]) / r;
+    const spread = vec.reduce((mx, v) => Math.max(mx, Math.acos(Math.max(-1, Math.min(1, v[0] * m[0] + v[1] * m[1] + v[2] * m[2])))), 0);
+    const alt = Math.min(3, Math.max(1.25, 0.9 + spread * 1.9));
+    setRotate(false);
+    world.pointOfView({ lat: lat - (phone() ? 12 : 0), lng, altitude: phone() ? alt * 1.2 : alt }, reduceMotion ? 0 : 1100);
+  }
+  function syncRoute() {
+    if (!world) return;
+    const on = ROUTE_VIEWS.includes(S.view) && S.plan.length > 0;
+    const cl = on ? planClusters() : [], key = cl.map((c) => c.key).join('>');
+    ROUTE.keys = new Set(cl.map((c) => c.key));
+    MK.forEach((n) => n.classList.toggle('inplan', ROUTE.keys.has(n.dataset.key)));
+    document.body.classList.toggle('route', on);
+    if (on === ROUTE.on && key === ROUTE.key) return;
+    const wasOn = ROUTE.on;
+    ROUTE.on = on; ROUTE.key = key;
+    world.polygonStrokeColor(() => (on ? BORDER_ROUTE : PHOTO ? 'rgba(170, 205, 235, 0.42)' : BORDER));
+    world.arcsData(cl.slice(1).map((c, i) => ({ a: cl[i], b: c })));
+    world.ringsData(on ? cl : []);
+    refreshMarkers();
+    if (on !== wasOn) setRouteMix(on ? 1 : 0);
+    if (on) fitRoute(cl);
+  }
+
   // ----- city labels that appear as you zoom in -----
   async function loadCities() {
     try {
@@ -1399,6 +1564,7 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
     const space = isSpace(c.boards[0]);
     wrap.className = space ? 'mk astro' : 'mk' + (n > 1 ? ' multi' : '') + (n >= 3 ? ' major' : '');
     wrap.dataset.key = c.key;
+    MK.add(wrap); if (ROUTE.keys.has(c.key)) wrap.classList.add('inplan');   // globe.gl attaches pins on its first frame, so a deep link to the plan can open before they are in the DOM
     wrap.innerHTML = space ? `<button type="button">${ASTRO_SVG}</button><span class="lbl" aria-hidden="true"></span>`
       : `<button type="button"><span class="dot">${n > 1 ? n : ''}</span></button><span class="lbl" aria-hidden="true"></span>`;
     const btn = wrap.firstChild;
@@ -1420,6 +1586,7 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
       const c = S.clusters.find((x) => x.key === node.dataset.key);
       node.classList.toggle('dim', !c.boards.some(matches));
       node.classList.toggle('active', !!(S.cluster && S.cluster.key === c.key));
+      node.classList.toggle('inplan', ROUTE.keys.has(c.key));
       labelMarker(node, c);
     });
   }
@@ -1513,14 +1680,14 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
     else if (b.ratecard) { const ip = S.plan.find((p) => p.id === b.id); S.opt = ip && rcOption(b, ip.opt) ? ip.opt : (cheapestOpt(b) || {}).key; }
     else S.pkg = b.packages[S.pkg] ? S.pkg : firstPkg(b);
     document.body.classList.add('panel-open'); document.body.classList.remove('rail-open');
-    renderPanel(); refreshMarkers(); renderList();
+    renderPanel(); refreshMarkers(); renderList(); syncRoute();
     try { history.replaceState(null, '', '#' + b.id); } catch {}
   }
   function closePanel() {
     S.sel = null; S.cluster = null; S.view = null;
     $('#panel').hidden = true; document.body.classList.remove('panel-open');
     if (world) world.ringsData([]);
-    refreshMarkers(); renderList();
+    refreshMarkers(); renderList(); syncRoute();
     try { history.replaceState(null, '', location.pathname); } catch {}
   }
   const fact = (label, v) => (v ? `<div><dt>${esc(label)}</dt><dd>${esc(v)}</dd></div>` : '');
@@ -1757,14 +1924,25 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
           ${anyPriced ? `<div class="total"><span>${esc(t(anyEnq ? 'estTotalPartial' : 'estTotal'))}</span><strong>${money(planTotal(), cur)}</strong></div>` : ''}
           <p class="note">${esc([t('planNote'), anyEnq ? t('planOnRequestNote') : '', fxNote(cur)].filter(Boolean).join(' '))}</p>` : `<p class="note">${esc(t('planEmpty'))}</p>`}
       </div></div>
-      ${S.plan.length ? `<div class="foot"><button class="cta" type="button" data-act="inquire">${ICON.send}${esc(t('sendInquiry'))}</button></div>` : ''}`;
+      <div class="foot">${S.plan.length ? `<button class="cta" type="button" data-act="inquire">${ICON.send}${esc(t('sendInquiry'))}</button>
+        <button class="cta ghost" type="button" data-act="ratecard">${esc(t('ratePdf'))}</button>` : `<button class="cta ghost" type="button" data-act="kit">${esc(t('kitPdf'))}</button>`}</div>`;
     P.hidden = false;
+    syncRoute();
   }
+  // ratecard.html renders the plan (or the whole catalogue) as a printable rate card; the plan travels in the URL so the link can be shared
+  function rateCardUrl(kit) {
+    const q = new URLSearchParams();
+    if (kit) q.set('kit', kit);
+    else q.set('items', S.plan.map((p) => [p.id, p.enq ? '' : (p.opt || p.pkg || ''), p.date || ''].join('|')).join(';'));
+    q.set('lang', S.lang); q.set('cur', planCur());
+    return 'ratecard.html?' + q.toString();
+  }
+  function openRateCard(kit) { window.open(rateCardUrl(kit), '_blank', 'noopener'); }
 
   // ---------- inquiry ----------
   function renderForm(err) {
     $('#panel').dataset.board = '';
-    S.view = 'form';
+    S.view = 'form'; syncRoute();
     const f = Object.assign({}, S.contact, S.form);
     const occ = ['birthday', 'anniversary', 'launch', 'other'];
     $('#panel').innerHTML = `<div class="scroll"><div class="body">
@@ -1851,7 +2029,7 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
   }
   function renderSent() {
     $('#panel').dataset.board = '';
-    S.view = 'sent';
+    S.view = 'sent'; syncRoute();
     $('#panel').innerHTML = `<div class="scroll"><div class="body">
       <div class="head"><span></span><button class="iconbtn" type="button" data-act="close" aria-label="${esc(t('close'))}">${ICON.x}</button></div>
       <div class="done"><span class="tick">${ICON.check}</span><h2>${esc(t('sentTitle'))}</h2><p class="note">${esc(t('sentText'))}</p>
@@ -1859,7 +2037,7 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
   }
   function renderFallback(subject, body) {
     $('#panel').dataset.board = '';
-    S.view = 'fallback';
+    S.view = 'fallback'; syncRoute();
     const mailto = `mailto:${INQUIRY.to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     $('#panel').innerHTML = `<div class="scroll"><div class="body">
         <div class="head"><h2>${esc(t('fbTitle'))}</h2><button class="iconbtn" type="button" data-act="close" aria-label="${esc(t('close'))}">${ICON.x}</button></div>
@@ -1929,6 +2107,8 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
       if (act === 'newplan') { S.plan = []; savePlan(); closePanel(); return toast(t('planCleared')); }
       if (act === 'plan') return togglePlan();
       if (act === 'inquire') return renderForm();
+      if (act === 'ratecard') return openRateCard('');
+      if (act === 'kit') return openRateCard('all');
       if (act === 'toplan') { S.view = 'plan'; return renderPlan(); }
       if (act === 'copyinq') return copyText($('#inqText').textContent, $('#inqText'));
       if (el.dataset.galstep && S.sel) { const n = (S.sel.gallery || []).length + (isSpace(S.sel) ? 1 : 0), i = S.gal[S.sel.id] || 0; S.gal[S.sel.id] = (i + +el.dataset.galstep + n) % n; return renderPanel(); }

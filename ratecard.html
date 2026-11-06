@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Ciao Group rate card</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="assets/ciao-group-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,500;0,700;0,800;1,800&family=Noto+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" id="cjkFont" href="data:text/css,">
+<style>
+/* Rate card and media kit, generated from the atlas plan. Same Ciao palette as the globe, on white paper:
+   navy ink, brand rule at the top, green for Ciao's actions, teal for Ciao's own confirmed prices, gold for estimates.
+   One page per screen when printed; the contact line repeats on every page. */
+:root {
+  color-scheme: light;
+  --paper: #ffffff;
+  --paper-2: #f3f7fa;
+  --ink: #0d2238;
+  --ink-dim: #4a6279;
+  --ink-mute: #7f97ad;
+  --line: #d6dfe8;
+  --green: #73d43a;
+  --green-ink: #0b220c;
+  --green-text: #3f8f1a;
+  --teal: #2a9d87;
+  --teal-soft: #e4f5f1;
+  --gold: #a7761a;
+  --gold-soft: #fbf3e3;
+  --brand-rule: linear-gradient(90deg, #73d43a 0%, #43c5ad 50%, #5aa7e1 100%);
+  --cjk: "Noto Sans SC";
+  --font-display: "Archivo", var(--cjk), "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Noto Sans", var(--cjk), "Helvetica Neue", Arial, sans-serif;
+  --r: 8px;
+}
+:root[lang="zh-TW"] { --cjk: "Noto Sans TC"; }
+:root[lang="ko"] { --cjk: "Noto Sans KR"; }
+:root[lang="ja"] { --cjk: "Noto Sans JP"; }
+[hidden] { display: none !important; }
+* { box-sizing: border-box; }
+html { background: #e9eef3; }
+body { margin: 0; color: var(--ink); font: 13px/1.5 var(--font-body); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+:root:not([lang="en"]) i, :root:not([lang="en"]) em { font-style: normal; }
+button, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* ---------- screen-only toolbar ---------- */
+.bar { position: sticky; top: 0; z-index: 2; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding: 10px 16px;
+  background: rgba(13, 34, 56, .96); color: #eef4f8; border-bottom: 1px solid #22456b; }
+.bar .sp { flex: 1; }
+.bar select { appearance: none; -webkit-appearance: none; background: #14304f; border: 1px solid #22456b; border-radius: 999px; padding: 5px 28px 5px 12px; font-size: 12.5px; color: #eef4f8; }
+.bar .sel { position: relative; }
+.bar .sel::after { content: ""; position: absolute; right: 11px; top: 50%; width: 6px; height: 6px; margin-top: -5px; border: solid #a3b8cb; border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); pointer-events: none; }
+.bar .hint { font-size: 12px; color: #a3b8cb; }
+.bar .cta { border: 0; border-radius: var(--r); padding: 8px 16px; background: var(--green); color: var(--green-ink); font-weight: 600; font-size: 13.5px; }
+.bar .cta:active { transform: translateY(1px); }
+.bar a { color: #a3b8cb; font-size: 12.5px; }
+
+/* ---------- document ---------- */
+.doc { max-width: 820px; margin: 24px auto 48px; background: var(--paper); box-shadow: 0 8px 30px rgba(13, 34, 56, .12); }
+.page { padding: 34px 40px; }
+.cover { position: relative; border-bottom: 1px solid var(--line); }
+.cover::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 5px; background: var(--brand-rule); }
+.cover .brand { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 26px; }
+.cover .brand img { height: 30px; width: auto; display: block; }
+.cover .issued { font-size: 12px; color: var(--ink-dim); text-align: right; }
+.cover h1 { margin: 0 0 6px; font: italic 800 34px/1.08 var(--font-display); letter-spacing: -.005em; text-wrap: balance; }
+:root:not([lang="en"]) .cover h1 { font-style: normal; }
+.cover .lede { margin: 0; font-size: 14.5px; color: var(--ink-dim); max-width: 60ch; }
+.contact { display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); gap: 10px 18px; margin: 24px 0 0; padding-top: 18px; border-top: 1px solid var(--line); }
+.contact div { min-width: 0; }
+.contact dt { font: 700 10.5px/1 var(--font-display); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 4px; }
+.contact dd { margin: 0; font-size: 12.5px; font-weight: 500; overflow-wrap: break-word; }
+.summary { border-bottom: 1px solid var(--line); }
+.cover + .summary { border-top: 0; }
+.toc { padding: 18px 40px; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 1fr 1fr; gap: 2px 28px; font-size: 12.5px; }
+.toc a { color: var(--ink); text-decoration: none; display: flex; justify-content: space-between; gap: 10px; padding: 3px 0; border-bottom: 1px dotted var(--line); }
+.toc a span:last-child { color: var(--ink-dim); white-space: nowrap; }
+.toc h2 { grid-column: 1 / -1; margin: 10px 0 4px; font: 700 11px/1 var(--font-display); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-mute); }
+.toc h2:first-child { margin-top: 0; }
+
+/* ---------- one screen ---------- */
+.board { border-bottom: 1px solid var(--line); break-inside: avoid; page-break-inside: avoid; }
+.board .top { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 22px; align-items: start; }
+.board .photo { position: relative; aspect-ratio: 4 / 3; border-radius: var(--r); overflow: hidden; background: var(--paper-2); }
+.board .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.board .photo.noimg { display: grid; place-items: center; color: var(--ink-mute); font-size: 12px; }
+.credit { margin: 5px 0 0; font-size: 10px; color: var(--ink-mute); line-height: 1.35; }
+.credit a { color: inherit; }
+.where { font-size: 12.5px; color: var(--ink-dim); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.kind { display: inline-block; font-size: 10.5px; font-weight: 600; letter-spacing: .04em; color: var(--green-text); border: 1px solid currentColor; border-radius: 999px; padding: 0 7px; line-height: 16px; }
+.board h2 { margin: 2px 0 0; font: 800 22px/1.15 var(--font-display); letter-spacing: -.005em; }
+.board h2 small { display: block; font: 500 12.5px/1.3 var(--font-body); color: var(--ink-dim); margin-top: 2px; }
+.why { margin: 8px 0 0; font-size: 12.5px; color: var(--ink-dim); max-width: 62ch; }
+.badge { display: inline-flex; gap: 6px; align-items: center; border-radius: 999px; padding: 3px 10px; font-size: 11.5px; font-weight: 600;
+  background: var(--gold-soft); color: var(--gold); margin-top: 10px; }
+.badge.ok { background: var(--teal-soft); color: var(--teal); }
+.badge svg { width: 13px; height: 13px; fill: currentColor; }
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 16px; margin: 14px 0 0; }
+.facts div { min-width: 0; }
+.facts dt { font: 700 10.5px/1 var(--font-display); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 3px; }
+.facts dd { margin: 0; font-size: 13px; }
+.sel-date { margin-top: 12px; padding: 8px 12px; border-radius: var(--r); background: var(--paper-2); font-size: 12.5px; display: flex; gap: 10px; flex-wrap: wrap; }
+.sel-date b { font-weight: 600; }
+
+.prices { margin-top: 18px; }
+.prices h3 { margin: 14px 0 6px; font: 700 13px/1.3 var(--font-display); }
+.prices h3:first-child { margin-top: 0; }
+.prices table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.prices th { font-size: 10.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-mute); text-align: right; padding: 0 8px 6px; white-space: nowrap; }
+.prices th:first-child { text-align: left; padding-left: 0; }
+.prices td { padding: 7px 8px; border-top: 1px solid var(--line); vertical-align: top; text-align: right; white-space: nowrap; font-weight: 600; }
+.prices td:first-child { text-align: left; padding-left: 0; white-space: normal; font-weight: 400; }
+.prices td b { display: block; font-weight: 600; }
+.prices td small { display: block; color: var(--ink-dim); font-size: 11.5px; line-height: 1.35; font-weight: 400; white-space: normal; }
+.prices tr.pick td { background: var(--teal-soft); }
+.prices tr.pick td:first-child { border-left: 3px solid var(--teal); padding-left: 8px; }
+.prices .na { color: var(--ink-mute); font-weight: 400; }
+.prices .fixed { font-weight: 500; color: var(--ink-dim); }
+.prices .range { display: block; font-size: 11px; color: var(--ink-dim); font-weight: 400; }
+.prices .about { font-weight: 400; color: var(--ink-dim); font-size: 11.5px; margin-right: 3px; }
+.note { margin: 10px 0 0; font-size: 11.5px; color: var(--ink-dim); }
+.onreq { margin-top: 18px; padding: 12px 14px; border: 1px dashed var(--line); border-radius: var(--r); font-size: 12.5px; color: var(--ink-dim); }
+.cond { margin-top: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; }
+.cond.one { grid-template-columns: 1fr; }
+.cond dt { font: 700 10.5px/1 var(--font-display); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 3px; }
+.cond dd { margin: 0; font-size: 12px; color: var(--ink-dim); }
+
+/* ---------- plan summary and terms ---------- */
+.summary table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-top: 12px; }
+.summary th { font-size: 10.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-mute); text-align: left; padding: 0 8px 6px 0; }
+.summary th.r, .summary td.r { text-align: right; white-space: nowrap; }
+.summary td { padding: 7px 8px 7px 0; border-top: 1px solid var(--line); vertical-align: top; }
+.summary td small { display: block; color: var(--ink-dim); font-size: 11.5px; }
+.summary .total td { border-top: 2px solid var(--ink); font-weight: 700; font-size: 14px; padding-top: 10px; }
+.page h2.sec { margin: 0 0 4px; font: 800 20px/1.2 var(--font-display); letter-spacing: -.005em; }
+.steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-top: 14px; counter-reset: step; }
+.steps div { font-size: 12px; color: var(--ink-dim); }
+.steps div::before { counter-increment: step; content: counter(step); display: block; width: 26px; height: 26px; border-radius: 50%; background: var(--green); color: var(--green-ink);
+  font: 700 12px/26px var(--font-display); text-align: center; margin-bottom: 8px; }
+.steps b { display: block; color: var(--ink); font-weight: 600; margin-bottom: 2px; }
+.terms p { margin: 10px 0 0; font-size: 12px; color: var(--ink-dim); max-width: 70ch; }
+.foot-line { display: none; }
+.empty { padding: 60px 40px; text-align: center; color: var(--ink-dim); }
+.empty a { color: var(--green-text); }
+
+/* ---------- print ---------- */
+@page { size: A4; margin: 12mm 12mm 16mm; }
+@media print {
+  html { background: #fff; }
+  .bar { display: none; }
+  .doc { max-width: none; margin: 0; box-shadow: none; }
+  .page { padding: 6mm 0; }
+  .cover, .toc { padding-left: 0; padding-right: 0; }
+  .board { page-break-after: always; break-after: page; border-bottom: 0; }
+  .board:last-of-type { page-break-after: auto; break-after: auto; }
+  .board .top { grid-template-columns: 62mm minmax(0, 1fr); }
+  .foot-line { display: flex; position: fixed; left: 0; right: 0; bottom: 0; justify-content: space-between; gap: 12px; font-size: 9.5px; color: var(--ink-mute);
+    border-top: 1px solid var(--line); padding-top: 4px; background: #fff; }
+  .foot-line span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  a { color: inherit; text-decoration: none; }
+}
+@media (max-width: 720px) {
+  .page { padding: 24px 18px; }
+  .board .top { grid-template-columns: 1fr; }
+  .facts { grid-template-columns: 1fr 1fr; }
+  .cond { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: 1fr 1fr; }
+  .toc { grid-template-columns: 1fr; padding: 16px 18px; }
+}
+</style>
+</head>
+<body>
+<div class="bar" id="bar" hidden>
+  <div class="sel"><select id="langSel" aria-label="Language"></select></div>
+  <div class="sel"><select id="curSel" aria-label="Currency"></select></div>
+  <span class="hint" id="hint"></span>
+  <span class="sp"></span>
+  <a id="backLink" href="index.html"></a>
+  <button class="cta" type="button" id="printBtn"></button>
+</div>
+<main class="doc" id="doc"><p class="empty" id="loading">Loading…</p></main>
+<div class="foot-line" id="footLine"></div>
+<script>
+(() => {
+  // Who to contact. Every page of the PDF carries this, so the file still leads back to us after it is forwarded.
+  // Fill in the WeChat ID when the business account exists; empty fields are hidden.
+  const CONTACT = { company: 'Ciao Group', email: 'opourmomen@gmail.com', phone: '+1 416-881-5888', wechat: '', cities: 'Toronto, Shanghai, Guangzhou', site: 'odavani.github.io/ciao-atlas' };
+
+  const $ = (s) => document.querySelector(s);
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const store = { get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} } };
+  const LANGS = [['en', 'English'], ['zh-CN', '简体中文'], ['zh-TW', '繁體中文'], ['ko', '한국어'], ['ja', '日本語']];
+  const CJK_FONT = { 'zh-CN': 'Noto+Sans+SC', 'zh-TW': 'Noto+Sans+TC', ko: 'Noto+Sans+KR', ja: 'Noto+Sans+JP' };
+  const LANG_CUR = { 'zh-CN': 'CNY', 'zh-TW': 'USD', ko: 'KRW', ja: 'JPY', en: 'USD' };
+  const CURS = ['USD', 'CNY', 'HKD', 'TWD', 'KRW', 'JPY', 'SGD', 'EUR', 'GBP', 'AED', 'AUD'];
+  const REGIONS = ['USA', 'Europe', 'Middle East', 'Asia', 'China', 'Australia'];
+  const PKGS = ['moment', 'day', 'week'];
+  const ICON_CHECK = '<svg viewBox="0 0 256 256" aria-hidden="true"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"/></svg>';
+
+  // Strings that exist only on this page. Everything else comes from the atlas (data/ui-strings.json).
+  const LOCAL = {
+    en: { rcPlan: 'Rate card for your plan', rcKit: 'Media kit and rate card', rcCes: 'Las Vegas during CES', rcRegion: '{r}: rate card',
+      ledePlan: '{n} placements you picked on the Ciao Billboard Atlas, with what each booking includes and what it costs.',
+      ledePlan1: 'The placement you picked on the Ciao Billboard Atlas, with what the booking includes and what it costs.',
+      ledeKit: '{n} screens, trucks and aerial banners in {c} cities, bookable through Ciao Group. Prices show what you get: run length, spot length, plays and conditions.',
+      ledeCes: 'Screens and LED trucks on the Strip and downtown for CES week, with what each booking includes.',
+      issued: 'Issued {d}', pricesIn: 'Prices in {c}', contact: 'Contact', wechat: 'WeChat', phone: 'Phone', email: 'Email', offices: 'Offices', web: 'Atlas',
+      contents: 'Contents', save: 'Save as PDF', back: 'Back to the atlas', hint: 'Use Save as PDF, or print, to get the file.',
+      yourPick: 'Your selection', what: 'What you get', conditions: 'Conditions', includes: 'Every booking includes {x}.',
+      taxIncl: 'Prices include {x}.', estNote: 'Estimated prices. The final price is confirmed when you book.', bookedDate: 'Requested date',
+      howTitle: 'How booking works', s1: 'Tell us the screen, date and occasion', s1t: 'A message is enough. We check the date with the screen.',
+      s2: 'Quote and contract', s2t: 'We confirm availability and send a written quote with the deposit and balance dates.',
+      s3: 'Artwork', s3t: 'We design or adapt your artwork to the screen’s exact spec and submit it for the operator’s review.',
+      s4: 'Live, with proof', s4t: 'We schedule the run and send photos and video of your campaign on screen.',
+      termsNote: 'Operators review every artwork before it plays. Where a tax applies it is stated with the price; other prices are net of local taxes. Share this file freely; the contact details are on every page.',
+      empty: 'Nothing to show yet. Build a plan on the atlas, then choose Rate card (PDF).', region: 'Region' },
+    'zh-CN': { rcPlan: '你的方案报价单', rcKit: '媒体资料与报价单', rcCes: '拉斯维加斯 CES 期间', rcRegion: '{r}报价单',
+      ledePlan: '你在 Ciao 全球大屏地图上选的 {n} 个投放位置，含每次投放包含的内容和价格。',
+      ledeKit: '{c} 个城市的 {n} 块大屏、广告车和飞机横幅，均可通过 Ciao Group 预订。价格对应明确的内容：投放时长、单次时长、播放次数和条件。',
+      ledeCes: 'CES 期间拉斯维加斯大道和市中心的大屏与 LED 广告车，含每次投放包含的内容。',
+      issued: '发布日期 {d}', pricesIn: '价格单位：{c}', contact: '联系我们', wechat: '微信', phone: '电话', email: '邮箱', offices: '办公室', web: '大屏地图',
+      contents: '目录', save: '保存为 PDF', back: '返回大屏地图', hint: '点击「保存为 PDF」或打印即可获得文件。',
+      yourPick: '你的选择', what: '包含内容', conditions: '条件', includes: '每次投放均含{x}。',
+      taxIncl: '价格已含{x}。', estNote: '估价，实际价格以确认报价为准。', bookedDate: '期望日期',
+      howTitle: '预订流程', s1: '告诉我们大屏、日期和场合', s1t: '一条消息就够，我们向媒体方核对档期。',
+      s2: '报价与合同', s2t: '确认档期后发送书面报价，注明定金和尾款时间。',
+      s3: '画面制作', s3t: '按屏幕规格设计或适配画面，提交媒体方审核。',
+      s4: '上屏并提供证明', s4t: '安排排期，并发送应援画面上屏的照片和视频。',
+      termsNote: '所有画面播出前均需媒体方审核。如含税费，会在价格旁注明；其余价格均为不含当地税费的净价。欢迎转发本文件，每页都有联系方式。',
+      empty: '暂无内容。请先在大屏地图上建立方案，再选择「下载报价单」。', region: '地区' },
+    'zh-TW': { rcPlan: '你的方案報價單', rcKit: '媒體資料與報價單', rcCes: '拉斯維加斯 CES 期間', rcRegion: '{r}報價單',
+      ledePlan: '你在 Ciao 全球大屏地圖上選的 {n} 個投放位置，含每次投放包含的內容和價格。',
+      ledeKit: '{c} 個城市的 {n} 塊大屏、廣告車和飛機橫幅，均可透過 Ciao Group 預訂。價格對應明確的內容：投放時長、單次時長、播放次數和條件。',
+      ledeCes: 'CES 期間拉斯維加斯大道和市中心的大屏與 LED 廣告車，含每次投放包含的內容。',
+      issued: '發布日期 {d}', pricesIn: '價格單位：{c}', contact: '聯絡我們', wechat: '微信', phone: '電話', email: '信箱', offices: '辦公室', web: '大屏地圖',
+      contents: '目錄', save: '儲存為 PDF', back: '返回大屏地圖', hint: '點「儲存為 PDF」或列印即可取得檔案。',
+      yourPick: '你的選擇', what: '包含內容', conditions: '條件', includes: '每次投放均含{x}。',
+      taxIncl: '價格已含{x}。', estNote: '估價，實際價格以確認報價為準。', bookedDate: '期望日期',
+      howTitle: '預訂流程', s1: '告訴我們大屏、日期和場合', s1t: '一則訊息就夠，我們向媒體方核對檔期。',
+      s2: '報價與合約', s2t: '確認檔期後寄出書面報價，註明訂金和尾款時間。',
+      s3: '畫面製作', s3t: '依螢幕規格設計或調整畫面，送交媒體方審核。',
+      s4: '上屏並提供證明', s4t: '安排排期，並寄送應援畫面上屏的照片和影片。',
+      termsNote: '所有畫面播出前均需媒體方審核。如含稅費，會在價格旁註明；其餘價格均為不含當地稅費的淨價。歡迎轉傳本檔案，每頁都有聯絡方式。',
+      empty: '尚無內容。請先在大屏地圖上建立方案，再選擇「下載報價單」。', region: '地區' },
+    ko: { rcPlan: '내 플랜 요금표', rcKit: '미디어 키트 및 요금표', rcCes: 'CES 기간 라스베이거스', rcRegion: '{r} 요금표',
+      ledePlan: 'Ciao 전광판 아틀라스에서 고른 {n}개 게재 위치와, 각 예약에 포함되는 내용과 비용입니다.',
+      ledeKit: '{c}개 도시의 스크린, 트럭, 항공 배너 {n}개를 Ciao Group을 통해 예약할 수 있습니다. 가격은 게재 기간, 광고 길이, 재생 횟수, 조건과 함께 표시됩니다.',
+      ledeCes: 'CES 주간 스트립과 다운타운의 스크린과 LED 트럭, 각 예약에 포함되는 내용입니다.',
+      issued: '발행 {d}', pricesIn: '가격 단위: {c}', contact: '문의', wechat: '위챗', phone: '전화', email: '이메일', offices: '사무실', web: '아틀라스',
+      contents: '목차', save: 'PDF로 저장', back: '아틀라스로 돌아가기', hint: 'PDF로 저장 또는 인쇄로 파일을 받으세요.',
+      yourPick: '선택한 옵션', what: '포함 내용', conditions: '조건', includes: '모든 예약에 {x} 포함.',
+      taxIncl: '가격에 {x} 포함.', estNote: '추정가입니다. 최종 가격은 예약 시 확정됩니다.', bookedDate: '희망 날짜',
+      howTitle: '예약 절차', s1: '스크린, 날짜, 목적을 알려 주세요', s1t: '메시지 하나면 충분합니다. 매체사와 날짜를 확인합니다.',
+      s2: '견적과 계약', s2t: '가용성을 확인한 뒤 계약금과 잔금 일정이 담긴 서면 견적을 보냅니다.',
+      s3: '소재 제작', s3t: '스크린 규격에 맞게 소재를 디자인하거나 조정해 매체사 심사에 제출합니다.',
+      s4: '게재와 증빙', s4t: '게재를 예약하고 스크린에 송출된 사진과 영상을 보내 드립니다.',
+      termsNote: '모든 소재는 송출 전 매체사 심사를 거칩니다. 세금이 적용되는 경우 가격과 함께 표시되며, 그 외 가격은 현지 세금을 제외한 금액입니다. 이 파일은 자유롭게 공유하세요. 연락처가 모든 페이지에 있습니다.',
+      empty: '아직 표시할 내용이 없습니다. 아틀라스에서 플랜을 만든 뒤 요금표 (PDF)를 선택하세요.', region: '지역' },
+    ja: { rcPlan: 'マイプランの料金表', rcKit: 'メディアキットと料金表', rcCes: 'CES 期間のラスベガス', rcRegion: '{r}の料金表',
+      ledePlan: 'Ciao ビルボードアトラスで選んだ {n} 件の掲出枠と、各予約に含まれる内容と料金です。',
+      ledeKit: '{c} 都市の {n} 件のスクリーン、トラック、空中バナーを Ciao Group から予約できます。料金には掲出期間、尺、再生回数、条件を明記しています。',
+      ledeCes: 'CES 週のストリップとダウンタウンのスクリーンと LED トラック、各予約に含まれる内容です。',
+      issued: '発行 {d}', pricesIn: '価格単位：{c}', contact: 'お問い合わせ', wechat: 'WeChat', phone: '電話', email: 'メール', offices: 'オフィス', web: 'アトラス',
+      contents: '目次', save: 'PDF で保存', back: 'アトラスに戻る', hint: '「PDF で保存」または印刷でファイルを取得できます。',
+      yourPick: '選択した内容', what: '含まれる内容', conditions: '条件', includes: 'すべての予約に{x}を含みます。',
+      taxIncl: '価格は{x}込みです。', estNote: '概算です。最終価格は予約時に確定します。', bookedDate: '希望日',
+      howTitle: '予約の流れ', s1: 'スクリーン、日付、目的を教えてください', s1t: 'メッセージ一つで十分です。媒体社に日程を確認します。',
+      s2: '見積もりと契約', s2t: '空き状況を確認し、手付金と残金の期日を記した書面の見積もりを送ります。',
+      s3: '素材制作', s3t: 'スクリーンの仕様に合わせて素材を制作または調整し、媒体社の審査に提出します。',
+      s4: '掲出と証明', s4t: '掲出を手配し、スクリーンに映ったキャンペーンの写真と動画をお送りします。',
+      termsNote: 'すべての素材は掲出前に媒体社の審査を受けます。税が適用される場合は価格と併記します。それ以外の価格は現地税を含みません。このファイルは自由に共有してください。連絡先は各ページにあります。',
+      empty: 'まだ表示する内容がありません。アトラスでプランを作り、料金表 (PDF) を選んでください。', region: '地域' }
+  };
+
+  const Q = new URLSearchParams(location.search);
+  const S = { boards: [], byId: {}, fx: { USD: 1 }, i18n: {}, str: {}, items: [], mode: 'plan', kit: '' };
+  S.lang = Q.get('lang') || store.get('ciao-lang', null) || 'en';
+  if (!LOCAL[S.lang]) S.lang = 'en';
+  S.cur = Q.get('cur') || store.get('ciao-cur', null) || LANG_CUR[S.lang] || 'USD';
+  if (!CURS.includes(S.cur)) S.cur = 'USD';
+
+  const t = (k, vars) => { let s = (LOCAL[S.lang] && LOCAL[S.lang][k]) ?? LOCAL.en[k] ?? (S.str[S.lang] && S.str[S.lang][k]) ?? (S.str.en && S.str.en[k]) ?? k;
+    if (vars) for (const v in vars) s = s.split('{' + v + '}').join(vars[v]); return s; };
+  const common = (k, fb) => (S.i18n[S.lang] && S.i18n[S.lang].common && S.i18n[S.lang].common[k]) || fb;
+  const tb = (b, f) => (b.i18n && b.i18n[S.lang] && b.i18n[S.lang][f]) || b[f];
+  const city = (b) => (S.i18n[S.lang] && S.i18n[S.lang].cities && S.i18n[S.lang].cities[b.city]) || b.city;
+  const country = (b) => (S.i18n[S.lang] && S.i18n[S.lang].countries && S.i18n[S.lang].countries[b.country]) || b.country;
+  const locale = () => ({ en: 'en-US', 'zh-CN': 'zh-CN', 'zh-TW': 'zh-TW', ko: 'ko-KR', ja: 'ja-JP' }[S.lang]);
+  function money(usd) {
+    const cur = S.cur, v = usd * (S.fx[cur] || 1);
+    try { return new Intl.NumberFormat(locale(), { style: 'currency', currency: cur, maximumFractionDigits: 0, minimumFractionDigits: 0 }).format(v); }
+    catch { return cur + ' ' + Math.round(v).toLocaleString(); }
+  }
+  function fmtDate(d) { try { return new Date(d + 'T00:00:00').toLocaleDateString(locale(), { year: 'numeric', month: 'short', day: 'numeric' }); } catch { return d; } }
+  const fmtAud = (n) => { if (!n) return ''; try { return t('perDay', { n: new Intl.NumberFormat(locale(), { notation: 'compact', maximumFractionDigits: 1 }).format(n) }); } catch { return t('perDay', { n }); } };
+  const fmtLoop = (s) => (s ? (s >= 60 ? t('mins', { n: +(s / 60).toFixed(s % 60 ? 1 : 0) }) : t('secShort', { n: s })) : '');
+  const fxNote = () => (S.cur === 'CNY' ? t('fxCny') : S.cur !== 'USD' ? t('fxOther') : '');
+  const isEnq = (b) => !!b.enquiry;
+
+  // ----- rate card helpers (same shapes as the atlas) -----
+  function rcOptions(b) {
+    const out = [];
+    ((b.ratecard && b.ratecard.groups) || []).forEach((g, gi) => g.rows.forEach((r, ri) => {
+      if (r.addon || r.included) return;
+      const named = g.columns.length > 1 || g.columns[0] !== 'Price';
+      r.prices.forEach((p, ci) => { if (p != null) out.push({ key: `${gi}:${ri}:${ci}`, gi, ri, ci, price: p, named }); });
+    }));
+    return out;
+  }
+  function rcText(b, gi, ri) {
+    const tg = b.i18n && b.i18n[S.lang] && b.i18n[S.lang].ratecard && b.i18n[S.lang].ratecard.groups && b.i18n[S.lang].ratecard.groups[gi];
+    const g = b.ratecard.groups[gi], tr = tg && tg.rows && tg.rows[ri];
+    return { title: (tg && tg.title) || g.title, label: ri == null ? '' : ((tr && tr.label) || g.rows[ri].label), sub: ri == null ? '' : ((tr && tr.sub) || g.rows[ri].sub || '') };
+  }
+  const colName = (c) => common('col.' + c, c);
+  function optLabel(b, o) { const tx = rcText(b, o.gi, o.ri); return tx.label + (o.named ? ', ' + colName(b.ratecard.groups[o.gi].columns[o.ci]) : ''); }
+  function lineText(b, l, pkg) {
+    let label = common('line.' + l.key, l.label), desc = l.desc;
+    if (l.key === 'creative' || l.key === 'management') desc = common('desc.' + l.key, l.desc);
+    if (l.key === 'approvals') desc = tb(b, 'approvals_desc') || common('desc.approvals', l.desc);
+    if (l.key === 'screen') desc = pkg === 'moment' ? (tb(b, 'moment_desc') || l.desc) : common('pkg.' + pkg, l.desc);
+    return { label, desc };
+  }
+  function itemPrice(b, it) {
+    if (isEnq(b)) return null;
+    if (b.ratecard) { const o = rcOptions(b).find((x) => x.key === it.sel); return o ? o.price : null; }
+    const q = b.packages[it.sel]; return q ? q.total.mid : null;
+  }
+  function itemLabel(b, it) {
+    if (isEnq(b)) return t('quoteOnRequest');
+    if (b.ratecard) { const o = rcOptions(b).find((x) => x.key === it.sel); return o ? optLabel(b, o) : ''; }
+    return b.packages[it.sel] ? t('p.' + it.sel) : '';
+  }
+
+  // ----- selection: ?items=id|sel|date;... or ?kit=all|ces|<region>, else the plan saved by the atlas -----
+  function resolveItems() {
+    const kit = (Q.get('kit') || '').trim();
+    const raw = Q.get('items');
+    if (kit) {
+      S.mode = 'kit'; S.kit = kit;
+      let list = S.boards.filter((b) => b.enquiry !== 'concept');
+      if (kit === 'ces') list = list.filter((b) => b.city === 'Las Vegas');
+      else if (kit !== 'all') list = list.filter((b) => b.region === kit);
+      const order = (b) => [REGIONS.indexOf(b.region), b.country, b.city, isEnq(b) ? 1 : 0, b.name];
+      list.sort((a, b) => { const x = order(a), y = order(b); for (let i = 0; i < x.length; i++) { if (x[i] < y[i]) return -1; if (x[i] > y[i]) return 1; } return 0; });
+      return list.map((b) => ({ id: b.id, sel: '', date: '' }));
+    }
+    let items;
+    if (raw != null) items = raw.split(';').filter(Boolean).map((s) => { const [id, sel = '', date = ''] = s.split('|'); return { id, sel, date }; });
+    else items = (store.get('ciao-plan', []) || []).map((p) => ({ id: p.id, sel: p.opt || p.pkg || '', date: p.date || '' }));
+    S.mode = 'plan';
+    return items.filter((it) => S.byId[it.id] && S.byId[it.id].enquiry !== 'concept');
+  }
+
+  // ----- views -----
+  const fact = (label, v) => (v ? `<div><dt>${esc(label)}</dt><dd>${esc(v)}</dd></div>` : '');
+  function badge(b, q) {
+    if (b.ratecard) return `<span class="badge ok">${ICON_CHECK}${esc(t('ratecard', { d: fmtDate(b.ratecard.issued) }))}</span>`;
+    if (isEnq(b)) return `<span class="badge">${esc(t('enqBadge'))}</span>`;
+    const src = q && q.source;
+    if (src === 'confirmed') return `<span class="badge ok">${ICON_CHECK}${esc(t('confirmed'))}</span>`;
+    if (src === 'quoted') return `<span class="badge ok">${esc(t('quoted'))}</span>`;
+    return `<span class="badge">${esc(t('c.' + (b.confidence || 'none')))}</span>`;
+  }
+  function rateCardTable(b, it) {
+    const rc = b.ratecard;
+    return rc.groups.map((g, gi) => {
+      const tg = rcText(b, gi);
+      const named = g.columns.length > 1 || g.columns[0] !== 'Price';
+      const head = `<thead><tr><th>${esc(t('what'))}</th>${g.columns.map((c) => `<th>${esc(named ? colName(c) : t('price'))}</th>`).join('')}</tr></thead>`;
+      const rows = g.rows.map((r, ri) => {
+        const tx = rcText(b, gi, ri);
+        const pick = r.prices.some((p, ci) => `${gi}:${ri}:${ci}` === it.sel);
+        return `<tr${pick ? ' class="pick"' : ''}><td><b>${esc(tx.label)}</b>${tx.sub ? `<small>${esc(tx.sub)}</small>` : ''}</td>${r.prices.map((p) => {
+          if (r.included) return `<td><span class="fixed">${esc(t('included'))}</span></td>`;
+          if (p == null) return `<td><span class="na">${esc(t('notOffered'))}</span></td>`;
+          if (r.addon) return `<td><span class="fixed">${money(p)} ${esc(common('unit.' + r.unit, r.unit || ''))}</span></td>`;
+          return `<td class="num">${money(p)}</td>`;
+        }).join('')}</tr>`;
+      }).join('');
+      return `<h3>${esc(tg.title)}${g.net ? ' ' + esc(t('net')) : ''}</h3><table>${head}<tbody>${rows}</tbody></table>`;
+    }).join('');
+  }
+  function estimateTable(b, it) {
+    const pk = PKGS.filter((k) => b.packages[k]);
+    const rows = pk.map((k) => {
+      const q = b.packages[k], screen = q.lines.find((l) => l.key === 'screen') || q.lines[0];
+      const desc = lineText(b, screen, k).desc;
+      const exact = q.source === 'confirmed' || q.source === 'quoted';
+      const range = !exact && q.total.lo !== q.total.hi ? `<span class="range">${esc(t('likely', { lo: money(q.total.lo), hi: money(q.total.hi) }))}</span>` : '';
+      return `<tr${it.sel === k ? ' class="pick"' : ''}><td><b>${esc(t('p.' + k))}</b><small>${esc(desc)}</small></td><td class="num">${exact ? '' : `<span class="about">${esc(t('about'))}</span>`}${money(q.total.mid)}${range}</td></tr>`;
+    }).join('');
+    const first = b.packages[pk[0]];
+    const inc = first.lines.filter((l) => l.key !== 'screen' && l.key !== 'tax').map((l) => lineText(b, l, pk[0]).label.toLowerCase());
+    const tax = first.lines.find((l) => l.key === 'tax');  // package totals already carry local tax where it applies: say so
+    const taxLbl = tax ? `${common('tax.' + tax.tax_name, tax.tax_name || '')} ${Math.round((tax.rate || 0) * 1000) / 10}%`.trim() : '';
+    const anyEst = pk.some((k) => !['confirmed', 'quoted'].includes(b.packages[k].source));
+    return `<table><thead><tr><th>${esc(t('what'))}</th><th>${esc(t('price'))}</th></tr></thead><tbody>${rows}</tbody></table>
+      <p class="note">${esc([inc.length ? t('includes', { x: inc.join(', ') }) : '', taxLbl ? t('taxIncl', { x: taxLbl }) : '', anyEst ? t('estNote') : '', t('datesNote')].filter(Boolean).join(' '))}</p>`;
+  }
+  function boardView(b, it, n) {
+    const q = !b.ratecard && !isEnq(b) ? b.packages[it.sel] || b.packages[PKGS.find((k) => b.packages[k])] : null;
+    const tk = b.truck || {};
+    const guide = tb(b, 'guide') || [];
+    const conds = guide.filter((g) => g.k === 'creative' || g.k === 'when');
+    const en = b.name, nm = tb(b, 'name');
+    const sel = it.sel && !isEnq(b) ? itemLabel(b, it) : '';
+    const pick = sel || it.date ? `<div class="sel-date">${sel ? `<span><b>${esc(t('yourPick'))}:</b> ${esc(sel)}</span>` : ''}${it.date ? `<span><b>${esc(t('bookedDate'))}:</b> ${esc(fmtDate(it.date))}</span>` : ''}</div>` : '';
+    // the photo keeps its attribution (author and license) so the file can be forwarded without losing the credit
+    const g0 = (b.gallery || []).map((g) => (typeof g === 'string' ? { src: g } : g)).find((g) => g.src === b.img) || b.credit || null;
+    const credit = b.img && g0 && g0.author ? `<p class="credit">${esc(t('photo'))} ${esc(g0.author)}${g0.license ? ', ' + esc(g0.license) : ''}${g0.page ? ` <a href="${esc(g0.page)}">${esc(new URL(g0.page).hostname.replace(/^www\./, ''))}</a>` : ''}</p>` : '';
+    return `<section class="board page" id="b-${esc(b.id)}">
+      <div class="top">
+        <div><div class="photo${b.img ? '' : ' noimg'}">${b.img ? `<img src="${esc(b.img)}" alt="${esc(nm)}">` : esc(nm)}</div>${credit}</div>
+        <div>
+          <div class="where">${esc(city(b))}, ${esc(country(b))}${b.kind && b.kind !== 'screen' ? `<i class="kind">${esc(t('tag.' + b.kind))}</i>` : ''}</div>
+          <h2>${esc(nm)}${nm !== en ? `<small>${esc(en)}</small>` : ''}</h2>
+          ${tb(b, 'why_iconic') ? `<p class="why">${esc(tb(b, 'why_iconic'))}</p>` : ''}
+          ${badge(b, q)}
+          <dl class="facts">
+            ${fact(t('format'), tb(b, 'format'))}
+            ${fact(t('size'), tb(b, 'size') || tk.screen_size)}
+            ${fact(t('adLength'), b.spot_length_sec ? t('secs', { n: b.spot_length_sec }) : '')}
+            ${fact(t('playsEvery'), fmtLoop(b.loop_length_sec))}
+            ${fact(t('shortest'), tb(b, 'min_booking'))}
+            ${fact(t('seenBy'), fmtAud(b.daily_audience))}
+            ${fact(t('screen'), tk.screen_type ? tk.screen_type + (tk.sides ? ', ' + t('sides', { n: tk.sides }) : '') : '')}
+          </dl>
+          ${pick}
+        </div>
+      </div>
+      ${isEnq(b) ? `<div class="onreq">${esc(t('enqNote'))}</div>` : `<div class="prices">${b.ratecard ? rateCardTable(b, it) + `<p class="note">${esc([fxNote(), t('datesNote')].filter(Boolean).join(' '))}</p>` : estimateTable(b, it)}</div>`}
+      ${conds.length ? `<dl class="cond${conds.length === 1 ? ' one' : ''}">${conds.map((g) => `<div><dt>${esc(t('g.' + g.k))}</dt><dd>${esc(g.text)}</dd></div>`).join('')}</dl>` : ''}
+    </section>`;
+  }
+  function contactBlock() {
+    const c = CONTACT;
+    const cells = [[t('email'), c.email, 'mailto:' + c.email], [t('phone'), c.phone, 'tel:' + c.phone.replace(/[^+\d]/g, '')], [t('wechat'), c.wechat, ''], [t('offices'), c.cities, ''], [t('web'), c.site, 'https://' + c.site]]
+      .filter(([, v]) => v);
+    return `<dl class="contact">${cells.map(([k, v, href]) => `<div><dt>${esc(k)}</dt><dd>${href ? `<a href="${esc(href)}">${esc(v)}</a>` : esc(v)}</dd></div>`).join('')}</dl>`;
+  }
+  function footLine() {
+    const c = CONTACT, bits = [c.company, c.email, c.phone, c.wechat ? `${t('wechat')} ${c.wechat}` : '', c.cities].filter(Boolean);
+    return bits.map((x) => `<span>${esc(x)}</span>`).join('');
+  }
+  function title() {
+    if (S.mode === 'plan') return t('rcPlan');
+    if (S.kit === 'all') return t('rcKit');
+    if (S.kit === 'ces') return t('rcCes');
+    return t('rcRegion', { r: t('r.' + S.kit) });
+  }
+  function lede(n, cities) {
+    if (S.mode === 'plan') return t(n === 1 && LOCAL[S.lang].ledePlan1 ? 'ledePlan1' : 'ledePlan', { n });
+    if (S.kit === 'ces') return t('ledeCes');
+    return t('ledeKit', { n, c: cities });
+  }
+  function render() {
+    document.documentElement.lang = S.lang;
+    const fam = CJK_FONT[S.lang];
+    $('#cjkFont').href = fam ? `https://fonts.googleapis.com/css2?family=${fam}:wght@400;500;700&display=swap` : 'data:text/css,';
+    document.title = `${CONTACT.company}: ${title()}`;
+    $('#printBtn').textContent = t('save'); $('#hint').textContent = t('hint'); $('#backLink').textContent = t('back');
+    $('#langSel').innerHTML = LANGS.map(([k, l]) => `<option value="${k}" ${k === S.lang ? 'selected' : ''}>${l}</option>`).join('');
+    $('#curSel').innerHTML = CURS.map((c) => `<option value="${c}" ${c === S.cur ? 'selected' : ''}>${c}</option>`).join('');
+    $('#bar').hidden = false;
+    $('#footLine').innerHTML = footLine();
+    const items = S.items;
+    if (!items.length) { $('#doc').innerHTML = `<p class="empty">${esc(t('empty'))} <a href="index.html">${esc(t('back'))}</a></p>`; return; }
+    const boards = items.map((it) => S.byId[it.id]);
+    const cities = new Set(boards.map((b) => b.city)).size;
+    const today = new Date().toISOString().slice(0, 10);
+    const byRegion = REGIONS.map((r) => [r, items.filter((it) => S.byId[it.id].region === r)]).filter(([, l]) => l.length);
+    const toc = items.length > 3 ? `<nav class="toc">${byRegion.map(([r, l]) => `<h2>${esc(t('r.' + r))}</h2>` + l.map((it) => { const b = S.byId[it.id]; const p = itemPrice(b, it);
+      const from = b.ratecard ? Math.min(...rcOptions(b).map((o) => o.price)) : !isEnq(b) ? Math.min(...Object.values(b.packages).filter(Boolean).map((x) => x.total.lo)) : null;
+      return `<a href="#b-${esc(b.id)}"><span>${esc(tb(b, 'name'))}, ${esc(city(b))}</span><span class="num">${p != null ? money(p) : from != null ? t('fromTpl', { p: money(from) }) : t('amtOnRequest')}</span></a>`; }).join('')).join('')}</nav>` : '';
+    const priced = items.filter((it) => itemPrice(S.byId[it.id], it) != null), anyEnq = items.some((it) => isEnq(S.byId[it.id]));
+    const summary = S.mode === 'plan' && items.length > 1 ? `<section class="page summary"><h2 class="sec">${esc(t('yourPlan'))}</h2>
+      <table><thead><tr><th>${esc(t('planLbl'))}</th><th>${esc(t('option'))}</th><th>${esc(t('date'))}</th><th class="r">${esc(t('price'))}</th></tr></thead><tbody>
+      ${items.map((it) => { const b = S.byId[it.id], p = itemPrice(b, it);
+        return `<tr><td>${esc(tb(b, 'name'))}<small>${esc(city(b))}, ${esc(country(b))}</small></td><td>${esc(itemLabel(b, it))}</td><td>${esc(it.date ? fmtDate(it.date) : '')}</td><td class="r num">${p != null ? (b.ratecard || ['confirmed', 'quoted'].includes((b.packages[it.sel] || {}).source) ? '' : t('about') + ' ') + money(p) : t('amtOnRequest')}</td></tr>`; }).join('')}
+      ${priced.length ? `<tr class="total"><td colspan="3">${esc(t(anyEnq ? 'estTotalPartial' : 'estTotal'))}</td><td class="r num">${money(priced.reduce((s, it) => s + itemPrice(S.byId[it.id], it), 0))}</td></tr>` : ''}
+      </tbody></table><p class="note">${esc([fxNote(), t('datesNote')].filter(Boolean).join(' '))}</p></section>` : '';
+    $('#doc').innerHTML = `<header class="cover page">
+        <div class="brand"><img src="assets/ciao-group-logo.png" alt="${esc(CONTACT.company)}"><div class="issued">${esc(t('issued', { d: fmtDate(today) }))}<br>${esc(t('pricesIn', { c: S.cur }))}</div></div>
+        <h1>${esc(title())}</h1>
+        <p class="lede">${esc(lede(items.length, cities))}</p>
+        ${contactBlock()}
+      </header>
+      ${summary}
+      ${toc}
+      ${boards.map((b, i) => boardView(b, items[i], i)).join('')}
+      <section class="page terms"><h2 class="sec">${esc(t('howTitle'))}</h2>
+        <div class="steps">${[1, 2, 3, 4].map((n) => `<div><b>${esc(t('s' + n))}</b>${esc(t('s' + n + 't'))}</div>`).join('')}</div>
+        <p>${esc(t('termsNote'))}</p>
+        ${contactBlock()}
+      </section>`;
+  }
+
+  function syncUrl() {
+    const u = new URL(location.href); u.searchParams.set('lang', S.lang); u.searchParams.set('cur', S.cur);
+    try { history.replaceState(null, '', u); } catch {}
+  }
+  $('#langSel').addEventListener('change', (e) => { S.lang = e.target.value; store.set('ciao-lang', S.lang); if (!Q.get('cur')) { S.cur = LANG_CUR[S.lang] || 'USD'; } syncUrl(); render(); });
+  $('#curSel').addEventListener('change', (e) => { S.cur = e.target.value; store.set('ciao-cur', S.cur); syncUrl(); render(); });
+  $('#printBtn').addEventListener('click', () => window.print());
+
+  Promise.all([fetch('data/boards.json').then((r) => r.json()), fetch('data/ui-strings.json').then((r) => r.json())]).then(([data, str]) => {
+    S.boards = data.boards; S.byId = Object.fromEntries(S.boards.map((b) => [b.id, b]));
+    S.fx = Object.assign({ USD: 1 }, (data.meta && data.meta.fx_per_usd) || {}); S.i18n = (data.meta && data.meta.i18n) || {}; S.str = str;
+    S.items = resolveItems();
+    render();
+  }).catch((e) => { $('#doc').innerHTML = `<p class="empty">${esc(String(e))}</p>`; });
+})();
+</script>
+</body>
+</html>
