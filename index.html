@@ -79,10 +79,16 @@ body:not(.panel-open) #globe { transform: translateX(calc(var(--rail-w) / 2)); }
 .mk.st-est .dot { opacity: .6; box-shadow: 0 0 0 2px rgba(7, 20, 35, .85); }
 .mk.st-est:not(.multi) .dot { width: 6px; height: 6px; }
 .mk.st-est button:hover .dot, .mk.st-est.active .dot { opacity: 1; }
+/* the pins we sell sit above the small estimate pins, and estimates get a smaller tap area so they can't steal a neighbour's click */
+.mk.st-book, .mk.st-partner, .mk.st-truck { z-index: 3; }
+.mk.st-book button { width: 34px; height: 34px; }
+.mk.st-est:not(.multi) button { width: 14px; height: 14px; }
+@media (pointer: coarse) { .mk.st-est:not(.multi) button { width: 20px; height: 20px; } .mk.st-book button { width: 40px; height: 40px; } }
+body.panel-open .pinkey, body.route .pinkey, body.rail-open .pinkey { display: none; }
 .mk.st-partner .dot, .mk.st-truck .dot { width: 16px; height: 16px; display: grid; place-items: center; font-size: 9px; }
 .mk.st-partner .dot { background: #ef9f27; color: #412402; box-shadow: 0 0 0 2px rgba(7, 20, 35, .85), 0 0 8px 1px rgba(239, 159, 39, .45); }
 .mk.st-truck .dot { background: #f0997b; color: #4a1b0c; box-shadow: 0 0 0 2px rgba(7, 20, 35, .85), 0 0 8px 1px rgba(240, 153, 123, .45); }
-.pinkey { position: absolute; right: 84px; bottom: 20px; z-index: 5; display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--ink-mute);
+.pinkey { position: absolute; right: 84px; bottom: 20px; z-index: 1; display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--ink-mute);
   background: rgba(7, 20, 35, .72); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; pointer-events: none; }
 .pinkey span { display: flex; align-items: center; gap: 8px; }
 .pinkey i { display: grid; place-items: center; width: 14px; height: 14px; border-radius: 50%; font: 700 8px/1 var(--font-display); font-style: normal; }
@@ -1302,7 +1308,7 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
   let world;
   // Default globe is the dot-matrix shader (no earth photos). Add ?globe=photo to the URL to get the old NASA texture globe back.
   const PHOTO = /[?&]globe=photo\b/.test(location.search);
-  const BORDER = 'rgba(170, 205, 235, 0.30)', BORDER_ROUTE = 'rgba(110, 190, 245, 0.78)';
+  const BORDER = 'rgba(190, 222, 248, 0.66)', BORDER_ROUTE = 'rgba(110, 190, 245, 0.78)';
   function initGlobe() {
     const el = $('#globe');
     world = new Globe(el, { animateIn: !reduceMotion })
@@ -1355,7 +1361,7 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
       const feats = topojson.feature(topo, topo.objects.countries).features.filter((f) => f.properties.name !== 'Antarctica');
       world.polygonsData(feats).polygonAltitude(0.004)
         .polygonCapColor(() => (PHOTO ? 'rgba(200, 222, 240, 0.035)' : 'rgba(0, 0, 0, 0)')).polygonSideColor(() => 'rgba(0, 0, 0, 0)')
-        .polygonStrokeColor(() => (ROUTE.on ? BORDER_ROUTE : PHOTO ? 'rgba(170, 205, 235, 0.42)' : BORDER))
+        .polygonStrokeColor(() => (ROUTE.on ? BORDER_ROUTE : PHOTO ? 'rgba(200, 228, 250, 0.72)' : BORDER))
         .polygonLabel((f) => esc((S.i18n[S.lang] && S.i18n[S.lang].countries && S.i18n[S.lang].countries[f.properties.name]) || f.properties.name))
         .polygonsTransitionDuration(0);
     }).catch(() => {});
@@ -1585,7 +1591,7 @@ vec3 gCol = pow( vec3( 0.035, 0.085, 0.150 ), vec3( 2.2 ) );
     if (on === ROUTE.on && key === ROUTE.key) return;
     const wasOn = ROUTE.on, setKey = [...ROUTE.keys].sort().join('|'), sameSet = setKey === ROUTE.setKey;   // reordering stops must not move the camera
     ROUTE.on = on; ROUTE.key = key; ROUTE.setKey = setKey;
-    world.polygonStrokeColor(() => (on ? BORDER_ROUTE : PHOTO ? 'rgba(170, 205, 235, 0.42)' : BORDER));
+    world.polygonStrokeColor(() => (on ? BORDER_ROUTE : PHOTO ? 'rgba(200, 228, 250, 0.72)' : BORDER));
     world.arcsData(cl.slice(1).map((c, i) => ({ a: cl[i], b: c })));
     world.ringsData(on ? cl : []);
     refreshMarkers();
