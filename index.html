@@ -70,6 +70,24 @@ body:not(.panel-open) #globe { transform: translateX(calc(var(--rail-w) / 2)); }
 .mk.multi .dot { width: 16px; height: 16px; display: grid; place-items: center; font: 700 10px/1 var(--font-display); color: var(--green-ink); }
 .mk button:hover .dot, .mk.active .dot { transform: scale(1.4); }
 .mk.active .dot { background: #f2fff0; }
+/* pin status (option C): bookable now = big with $, estimate = small and dim, partner = amber star, truck = coral T */
+.mk .dot { position: relative; font: 700 10px/1 var(--font-display); }
+.mk.st-book .dot { width: 18px; height: 18px; display: grid; place-items: center; color: var(--green-ink); font-size: 11px; }
+.mk.st-book.multi .dot { width: 22px; height: 22px; }
+.mk.st-book.multi .dot::after { content: '$'; position: absolute; right: -6px; top: -6px; width: 12px; height: 12px; border-radius: 50%;
+  display: grid; place-items: center; background: #f2fff0; color: var(--green-ink); font: 700 8px/1 var(--font-display); box-shadow: 0 0 0 1.5px rgba(7, 20, 35, .85); }
+.mk.st-est .dot { opacity: .6; box-shadow: 0 0 0 2px rgba(7, 20, 35, .85); }
+.mk.st-est:not(.multi) .dot { width: 6px; height: 6px; }
+.mk.st-est button:hover .dot, .mk.st-est.active .dot { opacity: 1; }
+.mk.st-partner .dot, .mk.st-truck .dot { width: 16px; height: 16px; display: grid; place-items: center; font-size: 9px; }
+.mk.st-partner .dot { background: #ef9f27; color: #412402; box-shadow: 0 0 0 2px rgba(7, 20, 35, .85), 0 0 8px 1px rgba(239, 159, 39, .45); }
+.mk.st-truck .dot { background: #f0997b; color: #4a1b0c; box-shadow: 0 0 0 2px rgba(7, 20, 35, .85), 0 0 8px 1px rgba(240, 153, 123, .45); }
+.pinkey { position: absolute; right: 84px; bottom: 20px; z-index: 5; display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--ink-mute);
+  background: rgba(7, 20, 35, .72); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; pointer-events: none; }
+.pinkey span { display: flex; align-items: center; gap: 8px; }
+.pinkey i { display: grid; place-items: center; width: 14px; height: 14px; border-radius: 50%; font: 700 8px/1 var(--font-display); font-style: normal; }
+@media (max-width: 760px) { .pinkey { bottom: 84px; right: 12px; font-size: 11px; padding: 6px 8px; } }
+.pinkey b { font-weight: 500; }
 .mk.dim { opacity: .18; pointer-events: none; }
 /* names: shown by declutter() only where they clear every other name and pin, so zoom in to reveal the rest; hover always shows one */
 .mk .lbl { position: absolute; left: 9px; top: -6px; white-space: nowrap; pointer-events: none; font: 700 11.5px/1 var(--font-display);
@@ -430,6 +448,13 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
     <span data-t="yourPlan"></span> <em id="planCount" class="num">0</em>
   </button>
 
+  <div class="pinkey" aria-hidden="true">
+    <span><i style="background:#73d43a;color:#0b220c">$</i><b data-t="pkBook"></b></span>
+    <span><i style="background:rgba(115,212,58,.6);width:7px;height:7px;margin:0 3.5px"></i><b data-t="pkEst"></b></span>
+    <span><i style="background:#ef9f27;color:#412402">★</i><b data-t="pkPartner"></b></span>
+    <span><i style="background:#f0997b;color:#4a1b0c">T</i><b data-t="pkTruck"></b></span>
+  </div>
+
   <div class="mobilebar">
     <img src="assets/ciao-group-logo.png" alt="Ciao Group" width="113" height="26">
     <button class="open" id="railOpen" type="button">
@@ -498,6 +523,7 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
       shortest: 'Shortest booking', size: 'Size', screen: 'Screen', sides: '{n} sides', route: 'Route',
       'p.moment': 'Moment', 'p.day': 'Full day', 'p.week': 'Week', bookingLength: 'Booking length',
       'c.high': 'Estimate from a published rate card', 'c.medium': 'Estimate from industry reports', 'c.low': 'Estimate benchmarked on nearby screens', 'c.none': 'Estimate',
+      pkBook: 'Bookable now', pkEst: 'Price estimate', pkPartner: 'Partner, price on request', pkTruck: 'LED truck',
       confirmed: 'Confirmed rate', quoted: 'Quoted by the operator', ratecard: 'Ciao rate card, {d}',
       unavailable: "This billboard isn't sold as a {pkg} booking. Choose another length above.",
       total: 'Total', price: 'Price', likely: 'Likely between {lo} and {hi}, depending on dates and availability', selection: 'Your selection: {x}',
@@ -528,6 +554,7 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
       shortest: '最短投放', size: '尺寸', screen: '屏幕', sides: '{n} 面', route: '路线',
       'p.moment': '应援时刻', 'p.day': '全天', 'p.week': '一周', bookingLength: '投放时长',
       'c.high': '估价（依据公开刊例价）', 'c.medium': '估价（依据行业报道）', 'c.low': '估价（参考周边同类大屏）', 'c.none': '估价',
+      pkBook: '现在可订', pkEst: '参考价', pkPartner: '合作方，询价', pkTruck: 'LED广告车',
       confirmed: '已确认价格', quoted: '媒体方报价', ratecard: 'Ciao 官方报价单 {d}',
       unavailable: '该大屏不提供「{pkg}」投放，请在上方选择其他时长。',
       total: '合计', price: '价格', likely: '预计 {lo} 至 {hi}，视档期和库存而定', selection: '已选：{x}',
@@ -558,6 +585,7 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
       shortest: '最短投放', size: '尺寸', screen: '螢幕', sides: '{n} 面', route: '路線',
       'p.moment': '應援時刻', 'p.day': '全天', 'p.week': '一週', bookingLength: '投放時長',
       'c.high': '估價（依據公開刊例價）', 'c.medium': '估價（依據產業報導）', 'c.low': '估價（參考周邊同類大屏）', 'c.none': '估價',
+      pkBook: '現在可訂', pkEst: '參考價', pkPartner: '合作方，詢價', pkTruck: 'LED廣告車',
       confirmed: '已確認價格', quoted: '媒體方報價', ratecard: 'Ciao 官方報價單 {d}',
       unavailable: '此大屏不提供「{pkg}」投放，請在上方選擇其他時長。',
       total: '合計', price: '價格', likely: '預計 {lo} 至 {hi}，視檔期與庫存而定', selection: '已選：{x}',
@@ -588,6 +616,7 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
       shortest: '최소 예약', size: '크기', screen: '스크린', sides: '{n}면', route: '경로',
       'p.moment': '모먼트', 'p.day': '하루 종일', 'p.week': '1주', bookingLength: '예약 기간',
       'c.high': '추정가 (공개 요금표 기준)', 'c.medium': '추정가 (업계 보도 기준)', 'c.low': '추정가 (인근 유사 스크린 기준)', 'c.none': '추정가',
+      pkBook: '지금 예약 가능', pkEst: '예상 가격', pkPartner: '파트너, 문의 시 가격', pkTruck: 'LED 트럭',
       confirmed: '확정 요금', quoted: '매체사 견적', ratecard: 'Ciao 공식 요금표 {d}',
       unavailable: '이 빌보드는 {pkg} 예약을 제공하지 않습니다. 위에서 다른 기간을 선택하세요.',
       total: '합계', price: '가격', likely: '날짜와 가용성에 따라 {lo}~{hi}', selection: '선택: {x}',
@@ -618,6 +647,7 @@ body.panel-open .tools { right: calc(var(--panel-w) + 28px); }
       shortest: '最短掲出', size: 'サイズ', screen: 'スクリーン', sides: '{n}面', route: 'ルート',
       'p.moment': 'モーメント', 'p.day': '終日', 'p.week': '1週間', bookingLength: '掲出期間',
       'c.high': '概算（公開料金表に基づく）', 'c.medium': '概算（業界報道に基づく）', 'c.low': '概算（近隣の同等スクリーンに基づく）', 'c.none': '概算',
+      pkBook: '今すぐ予約可', pkEst: '参考価格', pkPartner: 'パートナー、要問合せ', pkTruck: 'LEDトラック',
       confirmed: '確定料金', quoted: '媒体社の見積もり', ratecard: 'Ciao 公式料金表 {d}',
       unavailable: 'このビルボードは「{pkg}」での販売がありません。上で別の期間を選んでください。',
       total: '合計', price: '価格', likely: '日程と空き状況により {lo}〜{hi}', selection: '選択中：{x}',
@@ -1679,16 +1709,26 @@ vec3 gCol = pow( vec3( 0.035, 0.085, 0.150 ), vec3( 2.2 ) );
     const h = $('#hint'); if (!h || h.hidden) return;
     store.set('ciao-hint', true); h.classList.add('out'); setTimeout(() => { h.hidden = true; }, 500);
   }
+  // one status per city cluster: any board with a confirmed rate card makes it bookable now, then partners (price on request), then trucks, else estimate
+  const PIN_GLYPH = { book: '$', partner: '★', truck: 'T', est: '' };
+  function pinStatus(c) {
+    const bs = c.boards;
+    if (bs.some((b) => b.ratecard)) return 'book';
+    if (bs.some((b) => b.enquiry && !isSpace(b))) return 'partner';
+    if (bs.some((b) => b.kind === 'truck')) return 'truck';
+    return 'est';
+  }
   function markerEl(c) {
     if (c.city) return cityEl(c);
     const wrap = document.createElement('div');
     const n = c.boards.length;
     const space = isSpace(c.boards[0]);
-    wrap.className = space ? 'mk astro' : 'mk' + (n > 1 ? ' multi' : '') + (n >= 3 ? ' major' : '');
+    const st = space ? '' : pinStatus(c);
+    wrap.className = space ? 'mk astro' : 'mk' + (n > 1 ? ' multi' : '') + (n >= 3 ? ' major' : '') + ' st-' + st;
     wrap.dataset.key = c.key;
     MK.add(wrap); if (ROUTE.keys.has(c.key)) wrap.classList.add('inplan');   // globe.gl attaches pins on its first frame, so a deep link to the plan can open before they are in the DOM
     wrap.innerHTML = space ? `<button type="button">${ASTRO_SVG}</button><span class="lbl" aria-hidden="true"></span>`
-      : `<button type="button"><span class="dot">${n > 1 ? n : ''}</span></button><span class="lbl" aria-hidden="true"></span>`;
+      : `<button type="button"><span class="dot">${n > 1 ? n : PIN_GLYPH[st]}</span></button><span class="lbl" aria-hidden="true"></span>`;
     const btn = wrap.firstChild;
     btn.addEventListener('mouseenter', () => showPeek(c, btn));
     btn.addEventListener('mouseleave', hidePeek);
