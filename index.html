@@ -76,13 +76,13 @@ body:not(.panel-open) #globe { transform: translateX(calc(var(--rail-w) / 2)); }
 .mk.st-book.multi .dot { width: 22px; height: 22px; }
 .mk.st-book.multi .dot::after { content: '$'; position: absolute; right: -6px; top: -6px; width: 12px; height: 12px; border-radius: 50%;
   display: grid; place-items: center; background: #f2fff0; color: var(--green-ink); font: 700 8px/1 var(--font-display); box-shadow: 0 0 0 1.5px rgba(7, 20, 35, .85); }
-.mk.st-est .dot { opacity: .6; box-shadow: 0 0 0 2px rgba(7, 20, 35, .85); }
-.mk.st-est:not(.multi) .dot { width: 6px; height: 6px; }
+.mk.st-est .dot { opacity: .95; box-shadow: 0 0 0 2px rgba(7, 20, 35, .9), 0 0 0 3px rgba(115, 212, 58, .5), 0 0 7px 1px rgba(115, 212, 58, .35); }
+.mk.st-est:not(.multi) .dot { width: 9px; height: 9px; }
 .mk.st-est button:hover .dot, .mk.st-est.active .dot { opacity: 1; }
 /* the pins we sell sit above the small estimate pins, and estimates get a smaller tap area so they can't steal a neighbour's click */
 .mk.st-book, .mk.st-partner, .mk.st-truck { z-index: 3; }
 .mk.st-book button { width: 34px; height: 34px; }
-.mk.st-est:not(.multi) button { width: 14px; height: 14px; }
+.mk.st-est:not(.multi) button { width: 18px; height: 18px; }
 @media (pointer: coarse) { .mk.st-est:not(.multi) button { width: 20px; height: 20px; } .mk.st-book button { width: 40px; height: 40px; } }
 body.panel-open .pinkey, body.route .pinkey, body.rail-open .pinkey { display: none; }
 .mk.st-partner .dot, .mk.st-truck .dot { width: 16px; height: 16px; display: grid; place-items: center; font-size: 9px; }
@@ -1473,10 +1473,10 @@ vec3 gCol = pow( vec3( 0.035, 0.085, 0.150 ), vec3( 2.2 ) );
   float limb = smoothstep( 0.03, 0.42, facing );
   float px = length( fwidth( vObjPos ) ) * 0.5729578;
   vec3 col = mix( vec3( 0.035, 0.085, 0.150 ), vec3( 0.060, 0.150, 0.265 ), dayT );
-  vec3 landCol = mix( vec3( 0.20, 0.42, 0.64 ), vec3( 0.80, 0.91, 1.0 ), dayT );
+  vec3 landCol = mix( vec3( 0.26, 0.48, 0.70 ), vec3( 0.58, 0.76, 0.94 ), dayT );
   vec3 seaCol = vec3( 0.35, 0.60, 0.85 );
   vec3 latCol = vec3( 0.47, 0.69, 0.90 );
-  float landA = mix( 0.62, 0.95, dayT );
+  float landA = mix( 0.34, 0.50, dayT );
   float seaA = mix( 0.16, 0.28, dayT );
   for ( int i = 0; i < 2; i++ ) {
     float stp = i == 0 ? uStep : uStep * 0.5;
@@ -1486,7 +1486,7 @@ vec3 gCol = pow( vec3( 0.035, 0.085, 0.150 ), vec3( 2.2 ) );
     float d = dotField( lat, lng, stp, ctr );
     float land = step( 0.5, textureLod( map, vec2( ( ctr.x + 180.0 ) / 360.0, ( ctr.y + 90.0 ) / 180.0 ), 0.0 ).a );
     float w = mix( land, 1.0, routeMix );
-    float rl = stp * mix( 0.30, 0.12, routeMix );
+    float rl = stp * mix( 0.17, 0.12, routeMix );
     float rs = stp * mix( 0.15, 0.12, routeMix );
     float cl = 1.0 - smoothstep( rl - px, rl + px, d );
     float cs = 1.0 - smoothstep( rs - px, rs + px, d );
